@@ -4,14 +4,14 @@
 
 #include "../includes/WordCounter.hpp"
 
+bool SortCompare(WordData first, WordData second) {
+    return first.count > second.count;
+}
+
 WordCounter::WordCounter(char* inputPath, char* outputPath) {
     this->inputPath = inputPath;
     this->outputPath = outputPath;
     this->allWordCount = 0;
-}
-
-bool SortCompare(WordData first, WordData second) {
-    return first.count > second.count;
 }
 
 std::list<WordData> WordCounter::SortStatistics(std::map<std::string, unsigned int> wordsStatistic) {
@@ -22,7 +22,7 @@ std::list<WordData> WordCounter::SortStatistics(std::map<std::string, unsigned i
 
         data.word = wordStatistic.first;
         data.count = wordStatistic.second;
-        data.countPerSent = (double)data.count / (double)this->allWordCount;
+        data.countPerSent = (double)data.count / (double)this->allWordCount * (double)100;
 
         wordList.push_back(data);
     }
