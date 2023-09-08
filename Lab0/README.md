@@ -5,11 +5,11 @@
 1). открыть cmd в данной папке
 2). Прописать сначала
 ```
-cmake CMakeLists.txt
+cmake -S . -B build
 ```
 Затем
 ```
-cmake --build .
+ cmake --build build
 ```
 Создаться папка bin и exe-фаил будет лежать в ней
 
