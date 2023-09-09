@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 
 project(Lab0)
 
+set (CMAKE_CXX_STANDARD 17)
+
 file(GLOB all_SRCS
         "${PROJECT_SOURCE_DIR}/includes/*.h"
 		"${PROJECT_SOURCE_DIR}/includes/*.hpp"

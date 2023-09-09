@@ -1,28 +1,28 @@
-#include <string>
-#include <sstream> 
 #include <fstream>
+#include <sstream>
+#include <string>
 
 #include "../includes/WordCounter.hpp"
 
+namespace {
 bool SortCompare(WordData first, WordData second) {
     return first.count > second.count;
 }
+} // namespace
 
-WordCounter::WordCounter(char* inputPath, char* outputPath) {
-    this->inputPath = inputPath;
-    this->outputPath = outputPath;
-    this->allWordCount = 0;
-}
+WordCounter::WordCounter(std::string inputPath, std::string outputPath)
+    : inputPath_{inputPath}, outputPath_{outputPath}, allWordCount_{0} {}
 
-std::list<WordData> WordCounter::SortStatistics(std::map<std::string, unsigned int> wordsStatistic) {
+std::list<WordData> WordCounter::SortStatistics(
+    std::map<std::string, unsigned int> wordsStatistic) {
     std::list<WordData> wordList;
-    
-    for(auto wordStatistic: wordsStatistic) {
-        WordData data;
 
-        data.word = wordStatistic.first;
-        data.count = wordStatistic.second;
-        data.countPerSent = (double)data.count / (double)this->allWordCount * (double)100;
+    for (const auto &wordStatistic : wordsStatistic) {
+        WordData data{.word = wordStatistic.first,
+                      .count = wordStatistic.second,
+                      .countPerSent = static_cast<double>(data.count) /
+                                      static_cast<double>(allWordCount_) *
+                                      100.};
 
         wordList.push_back(data);
     }
@@ -34,24 +34,23 @@ std::list<WordData> WordCounter::SortStatistics(std::map<std::string, unsigned i
 
 // здесь будем подсчитывать слова, и allWords и конкретные
 std::list<WordData> WordCounter::GetWordsStatistic() {
-    std::fstream fs(this->inputPath);
+    std::fstream fs(inputPath_);
     std::string line;
     std::map<std::string, unsigned int> wordMap;
 
-    while(!fs.eof()) {
-        std::getline(fs, line);
-        for(size_t i = 0; i < line.length(); i++) {
-            if(!(line[i] >= '0' && line[i] <= '9' || 
-                 line[i] >= 'A' && line[i] <= 'Z' || 
-                 line[i] >= 'a' && line[i] <= 'z' )) {
+    while (std::getline(fs, line)) {
+        for (size_t i = 0; i < line.length(); i++) {
+            if (!(line[i] >= '0' && line[i] <= '9' ||
+                  line[i] >= 'A' && line[i] <= 'Z' ||
+                  line[i] >= 'a' && line[i] <= 'z')) {
                 line[i] = ' ';
             }
         }
         std::stringstream words(line);
         std::string word;
-        while(words >> word) {
+        while (words >> word) {
             wordMap[word]++;
-            this->allWordCount++;
+            allWordCount_++;
         }
     }
 
@@ -60,9 +59,10 @@ std::list<WordData> WordCounter::GetWordsStatistic() {
 }
 
 void WordCounter::WriteWordsStatistic(std::list<WordData> wordsList) {
-    std::fstream fs(this->outputPath);
-    
-    for(WordData word : wordsList) {
-        fs << word.word << ", " << word.count << ", " << word.countPerSent << std::endl;
+    std::fstream fs(outputPath_);
+
+    for (WordData word : wordsList) {
+        fs << word.word << ", " << word.count << ", " << word.countPerSent
+           << std::endl;
     }
 }
