@@ -43,6 +43,9 @@ TEST(CircularBufferMoveTest, MoveCellsTest) {
     CircularBuffer cb{5, 'a'};
     cb.rotate(3);
     EXPECT_TRUE(cb.is_linearized());
+    EXPECT_ANY_THROW(cb.rotate(10));
+    cb.pop_back();
+    EXPECT_ANY_THROW(cb.rotate(2));
 
     cb.linearize();
     EXPECT_TRUE(cb.is_linearized());

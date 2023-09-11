@@ -1,4 +1,3 @@
-#include <iostream>
 #include <stdexcept>
 
 #include "../includes/CircleBuffer.hpp"
@@ -89,21 +88,20 @@ bool CircularBuffer::is_linearized() const {
 }
 
 void CircularBuffer::rotate(int new_begin) {
-    try {
-        if (!this->full()) {
-            throw new std::logic_error("not full");
-        }
-        int interval = new_begin;
-        int lastPos = 0;
-        int nextPos = interval + lastPos;
-        for (int i = 0; i < m_capacity; i++) {
-            value_type tmp = m_buffer[nextPos];
-            m_buffer[nextPos] = m_buffer[lastPos];
-            lastPos = nextPos;
-            nextPos = mod<int>(nextPos + interval, m_capacity);
-        }
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
+    if (!this->full()) {
+        throw new std::logic_error("not full");
+    }
+    if (new_begin > this->size() - 1) {
+        throw new std::out_of_range("index out of range");
+    }
+    int interval = new_begin;
+    int lastPos = 0;
+    int nextPos = interval + lastPos;
+    for (int i = 0; i < m_capacity; i++) {
+        value_type tmp = m_buffer[nextPos];
+        m_buffer[nextPos] = m_buffer[lastPos];
+        lastPos = nextPos;
+        nextPos = mod<int>(nextPos + interval, m_capacity);
     }
 }
 
