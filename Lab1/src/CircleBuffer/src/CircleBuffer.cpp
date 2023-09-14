@@ -39,7 +39,7 @@ value_type &CircularBuffer::operator[](int i) {
 }
 
 const value_type &CircularBuffer::operator[](int i) const {
-    int index = mod<int>(m_start + i, m_capacity);
+    int index = mod<int>(m_start + i, m_capacity - 1);
     return m_buffer[index];
 }
 
@@ -88,20 +88,23 @@ bool CircularBuffer::is_linearized() const {
 }
 
 void CircularBuffer::rotate(int new_begin) {
-    if (!this->full()) {
-        throw new std::logic_error("not full");
-    }
     if (new_begin > this->size() - 1) {
         throw new std::out_of_range("index out of range");
     }
-    int interval = new_begin;
-    int lastPos = 0;
-    int nextPos = interval + lastPos;
-    for (int i = 0; i < m_capacity; i++) {
-        value_type tmp = m_buffer[nextPos];
-        m_buffer[nextPos] = m_buffer[lastPos];
-        lastPos = nextPos;
-        nextPos = mod<int>(nextPos + interval, m_capacity);
+    int interval = this->size() - new_begin;
+    int next =
+        new_begin + interval > m_end
+            ? mod<int>(new_begin + interval + (m_capacity - this->size()),
+                       m_capacity)
+            : mod<int>(new_begin + interval, m_capacity);
+    ;
+    value_type tmp = m_buffer[new_begin];
+    for (int i = 0; i < this->size(); i++) {
+        std::swap(tmp, m_buffer[next]);
+        next = next + interval > m_end
+                   ? mod<int>(next + interval + (m_capacity - this->size()),
+                              m_capacity)
+                   : mod<int>(next + interval, m_capacity);
     }
 }
 
@@ -192,10 +195,10 @@ void CircularBuffer::swap(CircularBuffer &cb) {
 void CircularBuffer::push_back(const value_type &item) {
 
     if (this->full()) {
-        m_end = mod<int>(m_end + 1, m_capacity);
-        m_start = mod<int>(m_start + 1, m_capacity);
+        m_end = mod<int>(m_end + 1, m_capacity - 1);
+        m_start = mod<int>(m_start + 1, m_capacity - 1);
     } else {
-        m_end = mod<int>(m_end + 1, m_capacity);
+        m_end = mod<int>(m_end + 1, m_capacity - 1);
     }
     m_buffer[m_end] = item;
 }
@@ -203,11 +206,11 @@ void CircularBuffer::push_back(const value_type &item) {
 void CircularBuffer::push_front(const value_type &item) {
 
     if (this->full()) {
-        m_end = mod<int>(m_end - 1, m_capacity);
-        m_start = mod<int>(m_start - 1, m_capacity);
+        m_end = mod<int>(m_end - 1, m_capacity - 1);
+        m_start = mod<int>(m_start - 1, m_capacity - 1);
 
     } else {
-        m_start = mod<int>(m_start - 1, m_capacity);
+        m_start = mod<int>(m_start - 1, m_capacity - 1);
     }
     m_buffer[m_start] = item;
 }
@@ -217,7 +220,7 @@ void CircularBuffer::pop_back() {
         m_end = -1;
         m_start = 0;
     } else {
-        m_end = mod<int>(m_end - 1, m_capacity);
+        m_end = mod<int>(m_end - 1, m_capacity - 1);
     }
 }
 
@@ -226,7 +229,7 @@ void CircularBuffer::pop_front() {
         m_end = -1;
         m_start = 0;
     } else {
-        m_start = mod<int>(m_start + 1, m_capacity);
+        m_start = mod<int>(m_start + 1, m_capacity - 1);
     }
 }
 
@@ -234,7 +237,7 @@ void CircularBuffer::insert(
     int pos, const value_type &item) { // нужна доработка, чтобы обработать
     if (pos > this->capacity())
         throw std::logic_error("Cannot be inserted into such a position");
-    m_buffer[mod<int>(m_start + pos, m_capacity)] = item;
+    m_buffer[mod<int>(m_start + pos, m_capacity - 1)] = item;
 }
 
 void CircularBuffer::erase(int first, int last) {
@@ -244,9 +247,9 @@ void CircularBuffer::erase(int first, int last) {
         m_start = 0;
         m_end = -1;
     } else if (first == 0) {
-        m_start = mod<int>(m_start + (last - first), m_capacity);
+        m_start = mod<int>(m_start + (last - first), m_capacity - 1);
     } else if (last == this->size() - 1) {
-        m_end = mod<int>(m_end - (last - first), m_capacity);
+        m_end = mod<int>(m_end - (last - first), m_capacity - 1);
     }
 }
 
