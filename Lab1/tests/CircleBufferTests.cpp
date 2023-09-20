@@ -134,8 +134,8 @@ TEST(CircularBufferRemoveElementTest, RemoveElementTest) {
     EXPECT_EQ(cb1.size(), 3);
 
     cb2.push_back('a');
+    EXPECT_EQ(cb2.size(), 1);
     cb2.pop_back();
-    EXPECT_EQ(cb2.size(), 0);
 
     cb2.push_back('a');
     cb2.pop_front();

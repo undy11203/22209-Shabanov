@@ -7,10 +7,11 @@ int mod(const int &a, const int &b) { return (a % b + b) % b; }
 } // namespace
 
 CircularBuffer::CircularBuffer()
-    : m_capacity{0}, m_buffer{nullptr}, m_start{-1}, m_end{-1} {}
+    : m_capacity{0}, m_buffer{nullptr}, m_start{}, m_end{0}, m_isEmpty{true} {}
 
 CircularBuffer::CircularBuffer(const CircularBuffer &cb)
-    : m_capacity{cb.m_capacity}, m_start{cb.m_start}, m_end{cb.m_end} {
+    : m_capacity{cb.m_capacity}, m_start{cb.m_start}, m_end{cb.m_end},
+      m_isEmpty{cb.m_isEmpty} {
     m_buffer = new value_type[m_capacity];
     for (int i = 0; i < m_capacity; i++) {
         m_buffer[i] = cb.m_buffer[i];
@@ -18,12 +19,12 @@ CircularBuffer::CircularBuffer(const CircularBuffer &cb)
 }
 
 CircularBuffer::CircularBuffer(int capacity)
-    : m_capacity{capacity}, m_start{0}, m_end{-1} {
+    : m_capacity{capacity}, m_start{0}, m_end{0}, m_isEmpty{true} {
     m_buffer = new value_type[capacity];
 }
 
 CircularBuffer::CircularBuffer(int capacity, const value_type &elem)
-    : m_capacity{capacity}, m_start{0}, m_end{capacity - 1} {
+    : m_capacity{capacity}, m_start{0}, m_end{0}, m_isEmpty{false} {
     m_buffer = new value_type[capacity];
 
     for (size_t i = 0; i < m_capacity; i++) {
@@ -61,9 +62,13 @@ value_type &CircularBuffer::front() { return m_buffer[m_start]; }
 
 const value_type &CircularBuffer::front() const { return m_buffer[m_start]; }
 
-value_type &CircularBuffer::back() { return m_buffer[m_end]; }
+value_type &CircularBuffer::back() {
+    return m_buffer[mod(m_end - 1, m_capacity)];
+}
 
-const value_type &CircularBuffer::back() const { return m_buffer[m_end]; }
+const value_type &CircularBuffer::back() const {
+    return m_buffer[mod(m_end - 1, m_capacity)];
+}
 
 value_type *CircularBuffer::linearize() {
     value_type *tmp = new value_type[m_capacity];
@@ -72,7 +77,7 @@ value_type *CircularBuffer::linearize() {
     }
     delete[] m_buffer;
     m_buffer = tmp;
-    m_end = this->size() - 1;
+    m_end = mod(this->size(), m_capacity);
     m_start = 0;
     return m_buffer;
 }
@@ -87,7 +92,7 @@ bool CircularBuffer::is_linearized() const {
 void CircularBuffer::rotate(int new_begin) {
     new_begin = mod(new_begin, m_capacity);
     int interval = this->size() - new_begin;
-    int next = new_begin + interval > m_end
+    int next = new_begin + interval > mod(m_end - 1, m_capacity)
                    ? mod(new_begin + interval + (m_capacity - this->size()),
                          m_capacity)
                    : mod(new_begin + interval, m_capacity);
@@ -95,19 +100,20 @@ void CircularBuffer::rotate(int new_begin) {
     for (int i = 0; i < this->size(); i++) {
         std::swap(tmp, m_buffer[next]);
         next =
-            next + interval > m_end
+            next + interval > mod(m_end - 1, m_capacity)
                 ? mod(next + interval + (m_capacity - this->size()), m_capacity)
                 : mod(next + interval, m_capacity);
     }
 }
 
 int CircularBuffer::size() const {
-    if (m_end == -1) {
+    if (m_isEmpty) {
         return 0;
     }
+    int lastIndex = mod(m_end - 1, m_capacity);
 
-    int size = m_end >= m_start ? m_end - m_start + 1
-                                : m_capacity - (m_start - m_end) + 1;
+    int size = lastIndex >= m_start ? lastIndex - m_start + 1
+                                    : m_capacity - (m_start - lastIndex) + 1;
     return size;
 }
 
@@ -134,11 +140,12 @@ void CircularBuffer::set_capacity(int new_capacity) {
     value_type *tmp = new value_type[new_capacity];
 
     if (new_capacity < m_capacity) {
-        m_end = new_capacity - 1;
+        m_end = 0;
         for (size_t i = 0; i < new_capacity; i++) {
             tmp[i] = m_buffer[i];
         }
     } else {
+        m_end = mod(m_end - 1, m_capacity) + 1;
         for (size_t i = 0; i < m_capacity; i++) {
             tmp[i] = m_buffer[i];
         }
@@ -162,7 +169,7 @@ void CircularBuffer::resize(int new_size, const value_type &item) {
             m_buffer[i] = item;
         }
     }
-    m_end = new_size - 1;
+    m_end = 0;
 
     m_capacity = new_size;
 }
@@ -180,6 +187,8 @@ CircularBuffer &CircularBuffer::operator=(const CircularBuffer &cb) {
     m_start = cb.m_start;
     m_end = cb.m_end;
 
+    m_isEmpty = cb.m_isEmpty;
+
     return *this;
 }
 
@@ -188,46 +197,54 @@ void CircularBuffer::swap(CircularBuffer &cb) {
     std::swap(m_capacity, cb.m_capacity);
     std::swap(m_start, cb.m_start);
     std::swap(m_end, cb.m_end);
+    std::swap(m_isEmpty, cb.m_isEmpty);
 }
 
 void CircularBuffer::push_back(const value_type &item) {
-
-    if (this->full()) {
-        m_end = mod(m_end + 1, m_capacity - 1);
-        m_start = mod(m_start + 1, m_capacity - 1);
-    } else {
-        m_end = mod(m_end + 1, m_capacity - 1);
-    }
     m_buffer[m_end] = item;
+    if (this->full()) {
+        m_end = mod(m_end + 1, m_capacity);
+        m_start = mod(m_start + 1, m_capacity);
+    } else {
+        m_end = mod(m_end + 1, m_capacity);
+    }
+
+    if (m_isEmpty) {
+        m_isEmpty = false;
+    }
 }
 
 void CircularBuffer::push_front(const value_type &item) {
-
     if (this->full()) {
-        m_end = mod(m_end - 1, m_capacity - 1);
-        m_start = mod(m_start - 1, m_capacity - 1);
+        m_end = mod(m_end - 1, m_capacity);
+        m_start = mod(m_start - 1, m_capacity);
 
     } else {
-        m_start = mod(m_start - 1, m_capacity - 1);
+        m_start = mod(m_start - 1, m_capacity);
     }
     m_buffer[m_start] = item;
+    if (m_isEmpty) {
+        m_isEmpty = false;
+    }
 }
 
 void CircularBuffer::pop_back() {
     if (this->size() == 1) {
-        m_end = -1;
+        m_end = 0;
         m_start = 0;
+        m_isEmpty = true;
     } else {
-        m_end = mod(m_end - 1, m_capacity - 1);
+        m_end = mod(m_end - 1, m_capacity);
     }
 }
 
 void CircularBuffer::pop_front() {
     if (this->size() == 1) {
-        m_end = -1;
+        m_end = 0;
         m_start = 0;
+        m_isEmpty = true;
     } else {
-        m_start = mod(m_start + 1, m_capacity - 1);
+        m_start = mod(m_start + 1, m_capacity);
     }
 }
 
@@ -250,8 +267,9 @@ void CircularBuffer::erase(int first, int last) {
 }
 
 void CircularBuffer::clear() {
-    m_end = -1;
+    m_end = 0;
     m_start = 0;
+    m_isEmpty = true;
 }
 
 bool operator==(const CircularBuffer &a, const CircularBuffer &b) {

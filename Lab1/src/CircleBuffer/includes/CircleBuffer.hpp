@@ -10,6 +10,7 @@ class CircularBuffer {
     int m_capacity;
     int m_start;
     int m_end;
+    bool m_isEmpty;
 
   public:
     CircularBuffer();
