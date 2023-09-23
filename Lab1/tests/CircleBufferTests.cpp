@@ -27,6 +27,10 @@ TEST(CircularBufferExtractTest, ExtractElementTest) {
 
     cb.insert(0, 'a');
     EXPECT_EQ(cb[0], 'a');
+    EXPECT_EQ(cb1[0], 'b');
+    EXPECT_EQ(cb1.at(0), 'b');
+    EXPECT_ANY_THROW(cb1.at(-1));
+    EXPECT_ANY_THROW(cb.at(-1));
     EXPECT_EQ(cb.at(0), 'a');
 
     cb.push_back('t');
@@ -113,6 +117,9 @@ TEST(CircularBufferAddElementTest, AddElementTest) {
 
     cb2.push_front('b');
     EXPECT_EQ(cb2.front(), 'b');
+    cb2.clear();
+    cb2.push_front('b');
+    EXPECT_EQ(cb2.front(), 'b');
 
     cb1.insert(1, 'g');
     EXPECT_EQ(cb1[1], 'g');
@@ -169,17 +176,20 @@ TEST(CircularBufferEqTest, EqTest) {
 
     cb2.push_back('a');
     EXPECT_FALSE(cb2 == cb1);
-
     cb2.pop_back();
+
     cb2.set_capacity(6);
     EXPECT_TRUE(cb2 == cb1);
 
     cb2.set_capacity(5);
     cb1.push_back('a');
-    cb2.push_back('b');
-    EXPECT_FALSE(cb2 == cb1);
+    cb2.push_back('a');
+    EXPECT_TRUE(cb2 == cb1);
 
-    EXPECT_TRUE(cb1 != cb2);
+    EXPECT_FALSE(cb1 != cb2);
+
+    cb1.insert(0, 'b');
+    EXPECT_FALSE(cb1 == cb2);
 }
 
 int main(int argc, char **argv) {

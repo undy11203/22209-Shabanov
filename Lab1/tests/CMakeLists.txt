@@ -1,6 +1,8 @@
 project(CircleBufferTests)
 
 set(SOURCE_FILES CircleBufferTests.cpp)
+set(CMAKE_CXX_FLAGS "--coverage")
+set(CMAKE_C_FLAGS "--coverage")
 
 add_executable(CircleBufferTests ${SOURCE_FILES})
 
