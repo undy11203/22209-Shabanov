@@ -118,7 +118,7 @@ int CircularBuffer::size() const {
 }
 
 bool CircularBuffer::empty() const {
-    if (this->size() == 0) {
+    return size() == 0;
         return true;
     }
     return false;
