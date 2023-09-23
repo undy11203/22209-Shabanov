@@ -125,7 +125,7 @@ bool CircularBuffer::empty() const {
 }
 
 bool CircularBuffer::full() const {
-    if (this->size() == this->capacity()) {
+    return size() == capacity();
         return true;
     }
     return false;
