@@ -85,19 +85,13 @@ value_type *CircularBuffer::linearize() {
 bool CircularBuffer::is_linearized() const { return m_start == 0; }
 
 void CircularBuffer::rotate(int new_begin) {
-    new_begin = mod(new_begin, m_capacity);
-    int interval = size() - new_begin;
-    int next =
-        new_begin + interval > mod(m_end - 1, m_capacity)
-            ? mod(new_begin + interval + (m_capacity - size()), m_capacity)
-            : mod(new_begin + interval, m_capacity);
-    value_type tmp = m_buffer[new_begin];
-    for (int i = 0; i < size(); i++) {
-        std::swap(tmp, m_buffer[next]);
-        next = next + interval > mod(m_end - 1, m_capacity)
-                   ? mod(next + interval + (m_capacity - size()), m_capacity)
-                   : mod(next + interval, m_capacity);
+    new_begin = mod(new_begin, size());
+    value_type* tmp = new value_type[m_capacity];
+    for (size_t i = 0; i < size(); i++) {
+        tmp[i] = at(mod(new_begin + i, size()));
     }
+    delete[] m_buffer;
+    m_buffer = tmp;
 }
 
 int CircularBuffer::size() const {
@@ -106,8 +100,12 @@ int CircularBuffer::size() const {
     }
     int lastIndex = mod(m_end - 1, m_capacity);
 
-    int size = lastIndex >= m_start ? lastIndex - m_start + 1
-                                    : m_capacity - (m_start - lastIndex) + 1;
+    int size;
+    if (lastIndex >= m_start) {
+        size = lastIndex - m_start + 1;
+    } else {
+        size = m_capacity - (m_start - lastIndex) + 1;
+    }
     return size;
 }
 

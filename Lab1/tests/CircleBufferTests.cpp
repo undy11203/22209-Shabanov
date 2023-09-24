@@ -52,7 +52,7 @@ TEST(CircularBufferMoveTest, MoveCellsTest) {
     cb.pop_back();
     cb.insert(2, 'e');
     cb.rotate(2);
-    EXPECT_EQ(cb.at(0), 'e');
+    EXPECT_EQ(cb.at(0), 'e');    
 
     cb.linearize();
     EXPECT_TRUE(cb.is_linearized());
