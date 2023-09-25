@@ -7,7 +7,7 @@ int mod(const int a, const int b) { return (a % b + b) % b; }
 } // namespace
 
 CircularBuffer::CircularBuffer()
-    : m_capacity{0}, m_buffer{nullptr}, m_start{}, m_end{0}, m_isEmpty{true} {}
+    : m_capacity{0}, m_buffer{nullptr}, m_start{0}, m_end{0}, m_isEmpty{true} {}
 
 CircularBuffer::CircularBuffer(const CircularBuffer &cb)
     : m_capacity{cb.m_capacity}, m_start{cb.m_start}, m_end{cb.m_end},
@@ -91,6 +91,8 @@ void CircularBuffer::rotate(int new_begin) {
         tmp[i] = at(mod(new_begin + i, size()));
     }
     delete[] m_buffer;
+    m_end = mod(size(), m_capacity);
+    m_start = 0;
     m_buffer = tmp;
 }
 
