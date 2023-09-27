@@ -47,6 +47,7 @@ TEST(CircularBufferExtractTest, ExtractElementTest) {
 
 TEST(CircularBufferMoveTest, MoveCellsTest) {
     CircularBuffer cb{5, 'a'};
+    CircularBuffer cb1;
     cb.rotate(3);
     EXPECT_TRUE(cb.is_linearized());
     cb.rotate(10);
@@ -54,12 +55,18 @@ TEST(CircularBufferMoveTest, MoveCellsTest) {
     cb.pop_back();
     cb.insert(2, 'e');
     cb.rotate(2);
-    EXPECT_EQ(cb.at(0), 'e');    
+    EXPECT_EQ(cb.at(0), 'e');  
+
+    cb1.rotate(1);
+    EXPECT_TRUE(cb1.is_linearized());  
 
     cb.linearize();
     EXPECT_TRUE(cb.is_linearized());
     cb.pop_front();
     EXPECT_FALSE(cb.is_linearized());
+
+    cb1.linearize();
+    EXPECT_TRUE(cb1.empty());
 }
 
 TEST(CircularBufferSizeTest, CheckSizeTest) {
@@ -81,17 +88,33 @@ TEST(CircularBufferSizeTest, CheckSizeTest) {
 
 TEST(CircularBufferSizeTest, SetSizeTest) {
     CircularBuffer cb{5, 'a'};
+    CircularBuffer cb1;
+    CircularBuffer cb2;
+    CircularBuffer cb3;
+    CircularBuffer cb4{1, 'b'};
 
+    cb1.set_capacity(6);
+    EXPECT_EQ(cb1.capacity(), 6);
     cb.set_capacity(6);
     EXPECT_EQ(cb.capacity(), 6);
-    EXPECT_EQ(cb.size(), 5);
+    EXPECT_EQ(cb.size(), 6);
     cb.set_capacity(3);
     EXPECT_EQ(cb.size(), 3);
+    cb.set_capacity(0);
+    EXPECT_EQ(cb.size(), 0);
 
     cb.resize(8, 'u');
-    EXPECT_EQ(cb.size(), 8);
+    EXPECT_EQ(cb.at(0), 'u');
     cb.resize(6, 'd');
     EXPECT_EQ(cb.size(), 6);
+    cb2.resize(5);
+    EXPECT_EQ(cb2.size(), 5);
+    cb.resize(0);
+    EXPECT_EQ(cb.size(), 0);
+    cb3.resize(3, 'a');
+    EXPECT_EQ(cb3.at(0), 'a');
+    cb4.resize(2, 'u');
+    EXPECT_EQ(cb4.at(1), 'u');
 }
 
 TEST(CircularBufferSwapTest, SwapTest) {

@@ -1,9 +1,11 @@
 #include <stdexcept>
 
+#include <iostream>
+
 #include "../includes/CircleBuffer.hpp"
 
 namespace {
-int mod(const int a, const int b) { return (a % b + b) % b; }
+int mod(const int a, const int b) { return b > 0 ? (a % b + b) % b : 0; }
 } // namespace
 
 CircularBuffer::CircularBuffer()
@@ -125,12 +127,12 @@ void CircularBuffer::set_capacity(int new_capacity) {
 
     if (new_capacity < m_capacity) {
         m_end = 0;
-        for (size_t i = 0; i < new_capacity; i++) {
+        m_isEmpty = new_capacity == 0 ? true : m_isEmpty;
+        for (size_t i = 0; i < size(); i++) {
             tmp[i] = m_buffer[i];
         }
     } else {
-        m_end = mod(m_end - 1, m_capacity) + 1;
-        for (size_t i = 0; i < m_capacity; i++) {
+        for (size_t i = 0; i < size(); i++) {
             tmp[i] = m_buffer[i];
         }
     }
@@ -141,27 +143,25 @@ void CircularBuffer::set_capacity(int new_capacity) {
 
 void CircularBuffer::resize(int new_size, const value_type &item) {
     linearize();
-    value_type *tmp = m_buffer;
+    value_type* tmp = m_buffer;
+    int stopIndex = size() > new_size ? new_size : size();
     m_buffer = new value_type[new_size];
-    for (size_t i = 0; i < size(); i++) {
+    for (size_t i = 0; i < stopIndex; i++) {
         m_buffer[i] = tmp[i];
     }
     delete[] tmp;
-
     if (new_size > m_capacity) {
-        for (size_t i = m_capacity - 1; i < new_size; i++) {
+        for (size_t i = stopIndex; i < new_size; i++) {
             m_buffer[i] = item;
         }
     }
     m_end = 0;
-
+    m_isEmpty = new_size > 0 ? false : true;
     m_capacity = new_size;
 }
 
 CircularBuffer &CircularBuffer::operator=(const CircularBuffer &cb) {
-    if (m_buffer != nullptr) {
-        delete[] m_buffer;
-    }
+    delete[] m_buffer;
 
     m_capacity = cb.m_capacity;
     m_buffer = new value_type[m_capacity];
