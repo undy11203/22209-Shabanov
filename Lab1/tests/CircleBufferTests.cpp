@@ -31,6 +31,8 @@ TEST(CircularBufferExtractTest, ExtractElementTest) {
     EXPECT_EQ(cb1.at(0), 'b');
     EXPECT_ANY_THROW(cb1.at(-1));
     EXPECT_ANY_THROW(cb.at(-1));
+    EXPECT_ANY_THROW(cb.at(6));
+    EXPECT_ANY_THROW(cb1.at(6));
     EXPECT_EQ(cb.at(0), 'a');
 
     cb.push_back('t');
@@ -88,10 +90,12 @@ TEST(CircularBufferSizeTest, SetSizeTest) {
 
     cb.resize(8, 'u');
     EXPECT_EQ(cb.size(), 8);
+    cb.resize(6, 'd');
+    EXPECT_EQ(cb.size(), 6);
 }
 
 TEST(CircularBufferSwapTest, SwapTest) {
-    CircularBuffer cb1{5};
+    CircularBuffer cb1;
     CircularBuffer cb2{5, 'b'};
     CircularBuffer tmp{cb1};
     cb1 = cb2;
@@ -161,6 +165,7 @@ TEST(CircularBufferRemoveElementTest, RemoveElementTest) {
     cb4.erase(0, 6);
     EXPECT_EQ(cb4.size(), 1);
     EXPECT_ANY_THROW(cb4.erase(-1, 1));
+    EXPECT_ANY_THROW(cb4.erase(0, 20));
     cb4.pop_back();
     EXPECT_EQ(cb4.size(), 0);
     cb4.push_back('a');

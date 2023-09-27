@@ -159,7 +159,7 @@ void CircularBuffer::resize(int new_size, const value_type &item) {
 }
 
 CircularBuffer &CircularBuffer::operator=(const CircularBuffer &cb) {
-    if (m_buffer) {
+    if (m_buffer != nullptr) {
         delete[] m_buffer;
     }
 
