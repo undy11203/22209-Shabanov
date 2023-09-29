@@ -104,7 +104,7 @@ int CircularBuffer::size() const {
     }
     int lastIndex = mod(m_end - 1, m_capacity);
 
-    int size;
+    int size = 0;
     if (lastIndex >= m_start) {
         size = lastIndex - m_start + 1;
     } else {
