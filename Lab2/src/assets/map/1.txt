@@ -1,0 +1,7 @@
+# life 1.02
+#N MyUniversity
+#R B3/S23
+#S 10/15
+3 3
+2 4
+3 5
