@@ -15,8 +15,16 @@ bool GameController::RunApp() {
     std::pair<std::string, std::string> command = m_gameView.GetInput();
     if (command.first == "dump") {
         m_fileModel.SaveToFile(m_gameModel.GetMap());
-    } else if (command.first == "tick") {
-        int ticks = std::stoi(command.second);
+    } else if (command.first == "tick" || command.first == "t") {
+        int ticks = 1;
+        try
+        {
+            ticks = std::stoi(command.second);
+
+        }
+        catch(const std::exception& e)
+        {
+        }
         for (int i = 0; i < ticks; i++) {
             m_gameView.Clear();
             m_gameModel.Update();
@@ -27,6 +35,11 @@ bool GameController::RunApp() {
         return true;
     } else if (command.first == "help") {
         m_gameView.Clear();
+        m_gameView.PrintHelp();
+        m_gameView.GetReturnCommand();
+    } else {
+        m_gameView.Clear();
+        m_gameView.PrintErrorCommand(command.first);
         m_gameView.PrintHelp();
         m_gameView.GetReturnCommand();
     }

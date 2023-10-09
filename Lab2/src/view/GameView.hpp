@@ -17,6 +17,7 @@ public:
     void PrintSuccessMessage();
     void PrintHelp();
     void GetReturnCommand();
+    void PrintErrorCommand(std::string command);
 };
 
 #endif

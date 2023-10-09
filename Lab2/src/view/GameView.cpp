@@ -70,23 +70,21 @@ void GameView::PrintSuccessMessage() {
 }
 
 void GameView::PrintHelp() {
-    std::cout << "   - dump <filename> - сохранить вселенную в файл"
+    std::cout << "   - dump <filename> - save university in file"
               << std::endl
-              << "   - tick <n=1> (и сокращенно t <n=1>) - рассчитать n (по "
-                 "умолчанию 1) "
+              << "   - tick <n=1> (t <n=1>) - make n iterations (default 1 iteration) "
               << std::endl
-              << "итераций и напечатать результат. На экране перед "
-              << std::endl
-              << "распечатанным полем должно отображаться имя вселенной, "
-              << std::endl
-              << "правило перехода и номер текущей итерации." << std::endl
-              << "   - exit – завершить игру" << std::endl
-              << "   - help – распечатать справку о командах" << std::endl;
+              << "   - exit - exit this game" << std::endl
+              << "   - help - list of commands" << std::endl;
 }
 
 void GameView::GetReturnCommand() {
     std::string input;
     std::cout << "Print enter or any button" << std::endl;
-    std::cin >> input;
+    std::getline(std::cin, input);
     std::cout << std::endl;
+}
+
+void GameView::PrintErrorCommand(std::string command) {
+    std::cout << "Uncorrect this command: \"" << command << "\"" << std::endl;
 }
