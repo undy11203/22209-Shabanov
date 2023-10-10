@@ -5,14 +5,14 @@
 
 #include "GameController.hpp"
 
-GameController::GameController(GameModel &gameModel, GameView &gameView, FileModel& fileModel)
-    : m_gameModel{gameModel}, m_gameView{gameView}, m_fileModel{fileModel} {}
+GameController::GameController(GameModel &gameModel, ConsoleView &consoleView, FileModel& fileModel)
+    : m_gameModel{gameModel}, m_consoleView{consoleView}, m_fileModel{fileModel} {}
 
 bool GameController::RunApp() {
-    m_gameView.Clear();
-    m_gameView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules(), m_gameModel.GetType());
-    m_gameView.PrintMap(m_gameModel.GetMap());
-    std::pair<std::string, std::string> command = m_gameView.GetInput();
+    m_consoleView.Clear();
+    m_consoleView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules(), m_gameModel.GetType());
+    m_consoleView.PrintMap(m_gameModel.GetMap());
+    std::pair<std::string, std::string> command = m_consoleView.GetInput();
     if (command.first == "dump") {
         m_fileModel.SaveToFile(m_gameModel.GetMap());
     } else if (command.first == "tick" || command.first == "t") {
@@ -26,22 +26,22 @@ bool GameController::RunApp() {
         {
         }
         for (int i = 0; i < ticks; i++) {
-            m_gameView.Clear();
+            m_consoleView.Clear();
             m_gameModel.Update();
-            m_gameView.PrintMap(m_gameModel.GetMap());
+            m_consoleView.PrintMap(m_gameModel.GetMap());
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     } else if (command.first == "exit") {
         return true;
     } else if (command.first == "help") {
-        m_gameView.Clear();
-        m_gameView.PrintHelp();
-        m_gameView.GetReturnCommand();
+        m_consoleView.Clear();
+        m_consoleView.PrintHelp();
+        m_consoleView.GetReturnCommand();
     } else {
-        m_gameView.Clear();
-        m_gameView.PrintErrorCommand(command.first);
-        m_gameView.PrintHelp();
-        m_gameView.GetReturnCommand();
+        m_consoleView.Clear();
+        m_consoleView.PrintErrorCommand(command.first);
+        m_consoleView.PrintHelp();
+        m_consoleView.GetReturnCommand();
     }
 
     return false;
@@ -53,5 +53,5 @@ void GameController::RunOfflineApp(int iterators) {
         m_gameModel.Update();
     }
     m_fileModel.SaveToFile(m_gameModel.GetMap());
-    m_gameView.PrintSuccessMessage();    
+    m_consoleView.PrintSuccessMessage();    
 }

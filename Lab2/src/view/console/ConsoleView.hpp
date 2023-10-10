@@ -5,11 +5,11 @@
 #include <string>
 #include <vector>
 
-class GameView
+class ConsoleView
 {
 public:
-    GameView() = default;
-    ~GameView() = default;
+    ConsoleView() = default;
+    ~ConsoleView() = default;
     std::pair<std::string, std::string> GetInput();
     void Clear();
     void PrintInfo(std::string name, std::pair<std::vector<int>, std::vector<int>> rules, std::string typeGame);

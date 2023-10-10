@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 
-#include <view/GameView.hpp>
+#include <view/console/ConsoleView.hpp>
 #include <model/game_logic/GameModel.hpp>
 #include <model/file/FileModel.hpp>
 #include <controller/GameController.hpp>
@@ -48,10 +48,10 @@ int main(int argc, char* argv[]) {
     int iterators = 0;
     FileModel fileModel;
     GameModel gameModel;
-    GameView gameView;
+    ConsoleView consoleView;
     Init(fileModel, iterators, gameModel, argc, args);
 
-    GameController gameController(gameModel, gameView, fileModel);
+    GameController gameController(gameModel, consoleView, fileModel);
 
     if(gameModel.GetType() == "online") { //online
         while(true){
