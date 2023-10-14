@@ -1,5 +1,4 @@
-#ifndef FileModel_H
-#define FileModel_H
+#pragma once
 
 #include <fstream>
 #include <string>
@@ -21,5 +20,3 @@ public:
   std::vector<std::pair<int, int>>  GetAliveFromFile();
   void                              SaveToFile(std::vector<std::vector<bool>> map);
 };
-
-#endif

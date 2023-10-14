@@ -1,7 +1,7 @@
-#ifndef GAMECONTROLLER_H
-#define GAMECONTROLLER_H
+#pragma once
 
 #include <console/ConsoleView.hpp>
+#include <gui/GuiView.hpp>
 #include <file/FileModel.hpp>
 #include <game_logic/GameModel.hpp>
 
@@ -10,13 +10,15 @@ class GameController
 private:
     GameModel m_gameModel;
     ConsoleView m_consoleView;
+    GuiView m_guiView;
     FileModel m_fileModel;
+    int m_offlineIteratins = 0;
 public:
     GameController();
-    GameController(GameModel& gameModel, ConsoleView& consoleView, FileModel& fileModel);
+    GameController(int argc, std::vector<std::string>& args);
     ~GameController() = default;
-    bool RunApp();
-    void RunOfflineApp(int iterators);
+    bool RunAppInConsole();
+    void RunAppInGui();
+    void RunOfflineApp();
 };
 
-#endif

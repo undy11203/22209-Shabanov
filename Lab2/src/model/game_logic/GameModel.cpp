@@ -3,12 +3,12 @@
 #include <iostream>
 #include <utility>
 
-GameModel::GameModel() : m_board{}, m_rules{}, m_type{"online"} {}
+GameModel::GameModel() : m_board{}, m_rules{} {}
 
 GameModel::GameModel(std::vector<std::pair<int, int>> alive, std::pair<int, int> size,
-           std::pair<std::vector<int>, std::vector<int>> rules, std::string type, std::string name)
+           std::pair<std::vector<int>, std::vector<int>> rules, std::string name)
     : m_board{alive, size.first, size.second},
-      m_rules(rules.first, rules.second), m_type{type}, m_name{name} {
+      m_rules(rules.first, rules.second), m_name{name} {
       }
 
 std::vector<std::vector<bool>> GameModel::GetMap() {
@@ -32,8 +32,4 @@ std::string GameModel::GetName() {
 
 std::pair<std::vector<int>, std::vector<int>> GameModel::GetRules() {
   return std::pair<std::vector<int>, std::vector<int>>(m_rules.GetRuleAboutBirth(), m_rules.GetRuleAboutSurvive());
-}
-
-std::string GameModel::GetType() {
-  return m_type;
 }

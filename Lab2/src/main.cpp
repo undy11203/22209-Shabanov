@@ -7,58 +7,91 @@
 #include <model/file/FileModel.hpp>
 #include <controller/GameController.hpp>
 
-void Init(FileModel& fileModel, int& iterations, GameModel& gameModel, int argc, std::vector<std::string> args) {
-    std::string inputPath = "";
-    std::string outputPath = "";
-    for (int i = 1; i < argc; ++i) {
-        if (args[i] == "-i") {
-            if (i + 1 < argc) {
-                iterations = std::stoi(args[i + 1]);
-                i++;
-            } else {
-                std::cerr << "Ошибка: Ожидалось значение для -i" << std::endl;
-            }
-        } else if(args[i].find("--iterations") != std::string::npos) {
-            iterations = stoi(args[i].substr(13));
-        } else if (args[i] == "-o") {
-            if (i + 1 < argc) {
-                outputPath = args[i + 1];
-                i++;
-            } else {
-                std::cerr << "Ошибка: Ожидалось значение для -o" << std::endl;
-            }
+#include <imgui.h>
+#include <imgui/backends/imgui_impl_glfw.h>
+#include <imgui/backends/imgui_impl_opengl3.h>
+#include <GLFW/glfw3.h>
+
+namespace 
+{
+    enum TypeView{
+        Console,
+        Gui
+    };
+    enum TypeGame {
+        Offline,
+        Online
+    };
+} // namespace 
+
+void ConfigGame(TypeView& typeView, TypeGame& typeGame, int argc, std::vector<std::string> args) {
+    typeView = Console;
+    typeGame = Online;
+
+    for (size_t i = 1; i < argc; i++)
+    {
+        if (args[i] == "-o") {
+            typeGame = Offline;
         }else if(args[i].find("--output") != std::string::npos) {
-            outputPath = args[i].substr(9);
-        } else {
-            inputPath = args[i];
+            typeGame = Offline;
+        } else if(args[i] == "--gui") {
+            typeView = Gui;
         }
     }
-
-    if(outputPath != ""){
-        fileModel = FileModel(inputPath, outputPath);
-        gameModel = GameModel(fileModel.GetAliveFromFile(), fileModel.GetSizeFromFile(), fileModel.GetRulesFromFile(), "offline", fileModel.GetNameUniveristyFromFile());
-    }else {
-        gameModel = GameModel(fileModel.GetAliveFromFile(), fileModel.GetSizeFromFile(), fileModel.GetRulesFromFile(), "online", fileModel.GetNameUniveristyFromFile());
-    }
+    
 }
 
 int main(int argc, char* argv[]) {
+    // glfwInit();
+    // GLFWwindow* window = glfwCreateWindow(1280, 720, "Dear ImGui GLFW+OpenGL3 example", nullptr, nullptr);
+    // if (window == nullptr)
+    //     return 1;
+    // glfwMakeContextCurrent(window);
+    // glfwSwapInterval(1); // Enable vsync
+    // const char* glsl_version = "#version 130";
+    // // Setup Dear ImGui context
+    // IMGUI_CHECKVERSION();
+    // ImGui::CreateContext();
+    // ImGuiIO& io = ImGui::GetIO(); (void)io;
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+    // // Setup Dear ImGui style
+    // ImGui::StyleColorsDark();
+    // //ImGui::StyleColorsLight();
+
+    // // Setup Platform/Renderer backends
+    // ImGui_ImplGlfw_InitForOpenGL(window, true);
+    // ImGui_ImplOpenGL3_Init(glsl_version);
+
+    // while(!glfwWindowShouldClose(window)) {
+    //     glfwPollEvents();
+
+    //     // Start the Dear ImGui frame
+    //     ImGui_ImplOpenGL3_NewFrame();
+    //     ImGui_ImplGlfw_NewFrame();
+    //     ImGui::NewFrame();
+    // }
     std::vector<std::string> args(argv, argv + argc);
 
-    int iterators = 0;
-    FileModel fileModel;
-    GameModel gameModel;
-    ConsoleView consoleView;
-    Init(fileModel, iterators, gameModel, argc, args);
+    TypeView typeView;
+    TypeGame typeGame;
 
-    GameController gameController(gameModel, consoleView, fileModel);
+    ConfigGame(typeView, typeGame, argc, args);
 
-    if(gameModel.GetType() == "online") { //online
-        while(true){
-            if(gameController.RunApp()) break;
+    GameController gameController(argc, args);
+
+    if(typeGame == Online) { //online
+        if (typeView == Gui) //gui
+        {
+            gameController.RunAppInGui();
+        }else { //console
+            while(true){
+                if(gameController.RunAppInConsole()) break;
+            }
         }
     }else { //offline
-        gameController.RunOfflineApp(iterators);
+        gameController.RunOfflineApp();
     }
 
     return 0;

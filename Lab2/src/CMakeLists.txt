@@ -6,18 +6,30 @@ add_subdirectory(model)
 add_subdirectory(view)
 add_subdirectory(controller)
 
-add_executable(Game "main.cpp")
+add_subdirectory(glfw)
 
-target_link_libraries(Game PRIVATE model view controller)
+add_executable(${PROJECT_NAME} "main.cpp")
 
-target_include_directories(Game PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+set(IMGUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
 
-set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin")
+include_directories("${IMGUI_SOURCE_DIR}")
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/glfw/include)
 
-add_custom_target(crutch
-    COMMAND my_program ../assets/1.txt --iterations=10 ../out/1.txt 
-    DEPENDS my_program 
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}  
+add_library(imgui STATIC
+"${IMGUI_SOURCE_DIR}/imgui.h"
+"${IMGUI_SOURCE_DIR}/imgui.cpp"
+"${IMGUI_SOURCE_DIR}/imgui_demo.cpp"
+"${IMGUI_SOURCE_DIR}/imgui_draw.cpp"
+"${IMGUI_SOURCE_DIR}/imgui_widgets.cpp"
+"${IMGUI_SOURCE_DIR}/imgui_tables.cpp"
+"${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.h"
+"${IMGUI_SOURCE_DIR}/backends/imgui_impl_glfw.cpp"
+"${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.h"
+"${IMGUI_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp"
 )
 
-add_dependencies(crutch Game) 
+target_link_libraries(${PROJECT_NAME} PRIVATE model view controller)
+target_link_libraries(${PROJECT_NAME} PUBLIC glfw imgui)
+
+set(EXECUTABLE_OUTPUT_PATH "${PROJECT_SOURCE_DIR}/bin")

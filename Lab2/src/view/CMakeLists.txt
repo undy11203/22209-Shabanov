@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.20)
 file(GLOB SOURCE_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/console/*.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/console/*.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.cpp"
         )
 
 add_library(view ${SOURCE_FILES})

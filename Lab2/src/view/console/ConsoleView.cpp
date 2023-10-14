@@ -26,7 +26,7 @@ void ConsoleView::Clear() {
     }   
 }
 
-void ConsoleView::PrintInfo(std::string name, std::pair<std::vector<int>, std::vector<int>> rules, std::string typeGame) {
+void ConsoleView::PrintInfo(std::string name, std::pair<std::vector<int>, std::vector<int>> rules) {
     std::cout << "Name University: " << name << std::endl;
     std::cout << "Rules: B";
     for (size_t i = 0; i < rules.first.size(); i++)
@@ -39,7 +39,6 @@ void ConsoleView::PrintInfo(std::string name, std::pair<std::vector<int>, std::v
         std::cout << rules.second.at(i);
     }
     std::cout << std::endl;
-    std::cout << "Type:" << typeGame << std::endl;
 }
 
 void ConsoleView::PrintMap(std::vector<std::vector<bool>> map) {
@@ -65,8 +64,8 @@ void ConsoleView::PrintMap(std::vector<std::vector<bool>> map) {
     std::cout << std::endl;
 }
 
-void ConsoleView::PrintSuccessMessage() {
-    std::cout << "Success" << std::endl;
+void ConsoleView::PrintCompletedMessage(std::string message) {
+    std::cout << "Success! " << std::endl;
 }
 
 void ConsoleView::PrintHelp() {
@@ -78,7 +77,7 @@ void ConsoleView::PrintHelp() {
               << "   - help - list of commands" << std::endl;
 }
 
-void ConsoleView::GetReturnCommand() {
+void ConsoleView::PrintReturnCommand() {
     std::string input;
     std::cout << "Print enter or any button" << std::endl;
     std::getline(std::cin, input);
@@ -87,4 +86,8 @@ void ConsoleView::GetReturnCommand() {
 
 void ConsoleView::PrintErrorCommand(std::string command) {
     std::cout << "Uncorrect this command: \"" << command << "\"" << std::endl;
+}
+
+void ConsoleView::PrintError(std::string error) {
+    std::cout << error << std::endl;
 }

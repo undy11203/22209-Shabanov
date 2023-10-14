@@ -1,5 +1,4 @@
-#ifndef GAMEVIEW_H
-#define GAMEVIEW_H
+#pragma once
 
 #include <utility>
 #include <string>
@@ -12,12 +11,11 @@ public:
     ~ConsoleView() = default;
     std::pair<std::string, std::string> GetInput();
     void Clear();
-    void PrintInfo(std::string name, std::pair<std::vector<int>, std::vector<int>> rules, std::string typeGame);
+    void PrintInfo(std::string name, std::pair<std::vector<int>, std::vector<int>> rules);
     void PrintMap(std::vector<std::vector<bool>> map);
-    void PrintSuccessMessage();
+    void PrintCompletedMessage(std::string message);
     void PrintHelp();
-    void GetReturnCommand();
+    void PrintReturnCommand();
     void PrintErrorCommand(std::string command);
+    void PrintError(std::string error);
 };
-
-#endif

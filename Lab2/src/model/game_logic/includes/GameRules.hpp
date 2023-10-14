@@ -1,5 +1,4 @@
-#ifndef GAMERULES_H
-#define GAMERULES_H
+#pragma once
 
 #include <vector>
 
@@ -15,5 +14,3 @@ public:
   std::vector<int> GetRuleAboutBirth() const;
   std::vector<int> GetRuleAboutSurvive() const;
 };
-
-#endif

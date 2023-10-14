@@ -1,5 +1,4 @@
-#ifndef GAMEBOARD_H
-#define GAMEBOARD_H
+#pragma once
 
 #include <vector>
 
@@ -20,4 +19,3 @@ public:
   std::vector<std::vector<bool>> GetField();
 };
 
-#endif

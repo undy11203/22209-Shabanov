@@ -7,3 +7,6 @@
 [submodule "Lab2/src/imgui"]
 	path = Lab2/src/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "Lab2/src/glfw"]
+	path = Lab2/src/glfw
+	url = https://github.com/glfw/glfw.git
