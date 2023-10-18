@@ -6,15 +6,15 @@ add_subdirectory(model)
 add_subdirectory(view)
 add_subdirectory(controller)
 
-add_subdirectory(glfw)
+add_subdirectory(vendor/glfw)
 
 add_executable(${PROJECT_NAME} "main.cpp")
 
-set(IMGUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui)
+set(IMGUI_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/vendor/imgui)
 
 include_directories("${IMGUI_SOURCE_DIR}")
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/glfw/include)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/vendor/glfw/include)
 
 add_library(imgui STATIC
 "${IMGUI_SOURCE_DIR}/imgui.h"

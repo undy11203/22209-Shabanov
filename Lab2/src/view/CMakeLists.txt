@@ -5,13 +5,13 @@ file(GLOB SOURCE_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/console/*.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/gui/*.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../glad/*.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/../glad/*.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/glad/*.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/../vendor/glad/*.h"
         )
 
 add_library(view ${SOURCE_FILES})
 
 target_include_directories(view PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories(view PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../imgui)
+target_include_directories(view PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../vendor/imgui)
 
 target_link_libraries(view PUBLIC glfw imgui)

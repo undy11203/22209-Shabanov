@@ -1,6 +1,6 @@
 #include "ImGuiView.hpp"
 
-#include "../../glad/glad.h"
+#include "../../vendor/glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
@@ -17,7 +17,6 @@ ImGuiView::~ImGuiView()
 }
 
 void ImGuiView::Start() {
-    std::cout << "bam bam";
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
