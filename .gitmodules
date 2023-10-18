@@ -13,3 +13,9 @@
 [submodule "Lab2/src/glad"]
 	path = Lab2/src/glad
 	url = https://github.com/Dav1dde/glad.git
+[submodule "Lab2/src/vendor/glfw"]
+	path = Lab2/src/vendor/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "Lab2/src/vendor/imgui"]
+	path = Lab2/src/vendor/imgui
+	url = https://github.com/ocornut/imgui.git
