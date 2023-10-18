@@ -1,5 +1,7 @@
 #include "ConsoleView.hpp"
 
+#include <thread>
+#include <chrono>
 #include <iostream>
 #include <sstream>
 
@@ -90,4 +92,8 @@ void ConsoleView::PrintErrorCommand(std::string command) {
 
 void ConsoleView::PrintError(std::string error) {
     std::cout << error << std::endl;
+}
+
+void ConsoleView::Sleep(int i){
+    std::this_thread::sleep_for(std::chrono::seconds(i));
 }

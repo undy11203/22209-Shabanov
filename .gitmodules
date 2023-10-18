@@ -10,3 +10,6 @@
 [submodule "Lab2/src/glfw"]
 	path = Lab2/src/glfw
 	url = https://github.com/glfw/glfw.git
+[submodule "Lab2/src/glad"]
+	path = Lab2/src/glad
+	url = https://github.com/Dav1dde/glad.git

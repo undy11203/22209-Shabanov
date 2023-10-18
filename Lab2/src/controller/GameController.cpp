@@ -1,11 +1,6 @@
-#include <thread>
-#include <chrono>
-
-#include <iostream> 
-
 #include "GameController.hpp"
 
-GameController::GameController(int argc, std::vector<std::string>& args) : m_consoleView{}, m_guiView{} {
+GameController::GameController(int argc, std::vector<std::string>& args) : m_consoleView{}, m_imGuiView{} {
     std::string inputPath = "";
     std::string outputPath = "";
 
@@ -49,48 +44,74 @@ GameController::GameController(int argc, std::vector<std::string>& args) : m_con
     }
 }
 
-bool GameController::RunAppInConsole() {
-    m_consoleView.Clear();
-    m_consoleView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
-    m_consoleView.PrintMap(m_gameModel.GetMap());
-    std::pair<std::string, std::string> command = m_consoleView.GetInput();
-    if (command.first == "dump") {
-        m_fileModel.SaveToFile(m_gameModel.GetMap());
-    } else if (command.first == "tick" || command.first == "t") {
-        int ticks = 1;
-        try
-        {
-            ticks = std::stoi(command.second);
+void GameController::RunAppInConsole() {
+    while (true)
+    {
+        m_consoleView.Clear();
+        m_consoleView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
+        m_consoleView.PrintMap(m_gameModel.GetMap());
+        std::pair<std::string, std::string> command = m_consoleView.GetInput();
+        if (command.first == "dump") {
+            m_fileModel.SaveToFile(m_gameModel.GetMap());
+        } else if (command.first == "tick" || command.first == "t") {
+            int ticks = 1;
+            try
+            {
+                ticks = std::stoi(command.second);
 
-        }
-        catch(const std::exception& e)
-        {
-            m_consoleView.PrintError("Ошибка: у данной команды аргумент целое положительное число");
-        }
-        for (int i = 0; i < ticks; i++) {
+            }
+            catch(const std::exception& e)
+            {
+                m_consoleView.PrintError("Ошибка: у данной команды аргумент целое положительное число");
+            }
+            for (int i = 0; i < ticks; i++) {
+                m_gameModel.Update();
+                
+                m_consoleView.Clear();
+                m_consoleView.PrintMap(m_gameModel.GetMap());
+                m_consoleView.Sleep(1);
+            }
+        } else if (command.first == "exit") {
+            break;
+        } else if (command.first == "help") {
             m_consoleView.Clear();
-            m_gameModel.Update();
-            m_consoleView.PrintMap(m_gameModel.GetMap());
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            m_consoleView.PrintHelp();
+            m_consoleView.PrintReturnCommand();
+        } else {
+            m_consoleView.Clear();
+            m_consoleView.PrintErrorCommand(command.first);
+            m_consoleView.PrintHelp();
+            m_consoleView.PrintReturnCommand();
         }
-    } else if (command.first == "exit") {
-        return true;
-    } else if (command.first == "help") {
-        m_consoleView.Clear();
-        m_consoleView.PrintHelp();
-        m_consoleView.PrintReturnCommand();
-    } else {
-        m_consoleView.Clear();
-        m_consoleView.PrintErrorCommand(command.first);
-        m_consoleView.PrintHelp();
-        m_consoleView.PrintReturnCommand();
-    }
 
-    return false;
+    }
 }
 
-void GameController::RunAppInGui() {
-    
+void GameController::RunAppInImGui() {
+    m_imGuiView.Start();
+    while (!m_imGuiView.ShouldClose())
+    {
+        m_imGuiView.Update();
+        m_imGuiView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
+        m_imGuiView.PrintMap(m_gameModel.GetMap());
+        std::vector<std::pair<std::string, std::string>> commandArray = m_imGuiView.PrintGetInputBar();
+        for (size_t i = 0; i < commandArray.size(); i++)
+        {
+            if (commandArray[i].first == "dump")
+            {
+                m_fileModel.SaveToFile(m_gameModel.GetMap());
+                m_imGuiView.PrintCompletedMessage("Save complete!");
+            } else if(commandArray[i].first == "tick") {
+                for (size_t i = 0; i < stoi(commandArray[i].second); i++)
+                {
+                    /* code */
+                }
+                
+            }
+        }
+        
+        m_imGuiView.Render();
+    }
 }
 
 void GameController::RunOfflineApp() {
