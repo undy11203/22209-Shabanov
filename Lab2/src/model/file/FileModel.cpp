@@ -1,10 +1,12 @@
 #include "FileModel.hpp"
 
 #include <iostream>
+#include <cstring>
 
-FileModel::FileModel(std::string inputPath, std::string outputPath)
-    : m_inputPath{inputPath != "" ? inputPath : m_inputPath},
-      m_outputPath{outputPath != "" ? outputPath : m_outputPath} {}
+FileModel::FileModel(std::string inputPath, std::string outputPath){
+  m_inputPath = strcmp(inputPath.data(), "") != 0 ? std::filesystem::path(inputPath) : m_inputPath;
+  m_outputPath = strcmp(outputPath.data(), "") != 0 ? std::filesystem::path(outputPath) : m_outputPath;
+}
 
 std::string FileModel::GetNameUniveristyFromFile() {
   std::fstream fs(m_inputPath);
@@ -126,4 +128,9 @@ void FileModel::SaveToFile(std::vector<std::vector<bool>> map) {
     fs << "==";
   }
   fs << "==\n";
+}
+
+bool FileModel::isFileExists(std::string& filePath) {
+    std::filesystem::path path(filePath);
+    return std::filesystem::exists(path) && std::filesystem::is_regular_file(path);
 }

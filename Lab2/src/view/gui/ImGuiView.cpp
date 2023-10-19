@@ -1,5 +1,8 @@
 #include "ImGuiView.hpp"
 
+#include <thread>
+#include <chrono>
+
 #include "../../vendor/glad/glad.h"
 #include <GLFW/glfw3.h>
 #include <imgui.h>
@@ -7,6 +10,22 @@
 #include <backends/imgui_impl_opengl3.h>
 
 #include <iostream>
+
+namespace 
+{
+    void DrawCell(int x, int y, bool filled, int verticalSize, int horizontalSize, int windowPosX, int windowPosY) {
+        ImVec2 topLeft = ImVec2(x*horizontalSize + windowPosX, y*verticalSize + windowPosY);
+        ImVec2 bottomRight = ImVec2((x+1)*horizontalSize + windowPosX, (y+1)*verticalSize + windowPosY);
+
+        ImDrawList* draw = ImGui::GetBackgroundDrawList();
+        if(filled){
+            draw->AddRectFilled(topLeft, bottomRight, ImColor(ImVec4(1.0, 1.0, 1.0, 1.0)));
+        }else {
+            draw->AddRectFilled(topLeft, bottomRight, ImColor(ImVec4(0.0, 0.0, 0.0, 1.0)));
+        }
+    }
+} // namespace 
+
 
 ImGuiView::ImGuiView(/* args */) : m_window{nullptr}, m_mapCheckbox{false}, m_inputCheckbox{false}, m_infoCheckbox{false}
 {
@@ -36,7 +55,7 @@ void ImGuiView::Start() {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
     // Setup Dear ImGui style
-    io.FontDefault = io.Fonts->AddFontFromFileTTF("../assets/fonts/PixelifySans-VariableFont_wght.ttf", 28.0f);
+    io.FontDefault = io.Fonts->AddFontFromFileTTF("../assets/fonts/FRM325x8.ttf", 18.0f);
     IM_ASSERT(io.FontDefault);
     ImGui::GetStyle().WindowBorderSize = 0.0f;
     auto& colors                       = ImGui::GetStyle().Colors;
@@ -78,7 +97,7 @@ void ImGuiView::Start() {
 }
 
 void ImGuiView::Update(){
-    glClearColor(0.2f, 0.3f, .03f, 1.0f);
+    glClearColor(0.1f, 0.105f, 0.11f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glfwPollEvents();
     ImGui_ImplOpenGL3_NewFrame();
@@ -102,8 +121,7 @@ void ImGuiView::PrintInfo(std::string name, std::pair<std::vector<int>, std::vec
 
     ImGui::Begin("Info current game", nullptr, ImGuiWindowFlags_NoCollapse);
 
-    ImGui::Text("Name:"); ImGui::SameLine();
-    ImGui::Text(name.data());
+    ImGui::Text("Name: %s", name.data());
     ImGui::Text("Rules: B"); ImGui::SameLine();
     for (size_t i = 0; i < rules.first.size(); i++)
     {
@@ -123,7 +141,6 @@ void ImGuiView::PrintInfo(std::string name, std::pair<std::vector<int>, std::vec
 
 std::vector<std::pair<std::string, std::string>> ImGuiView::PrintGetInputBar() {
     std::vector<std::pair<std::string, std::string>> input;
-    char dumpImput[256] = "\0";
     int tickInput = -1;
 
     ImGui::SetNextWindowPos(ImVec2(0, 150));
@@ -131,35 +148,33 @@ std::vector<std::pair<std::string, std::string>> ImGuiView::PrintGetInputBar() {
 
     ImGui::Begin("Input bar", nullptr, ImGuiWindowFlags_NoCollapse);
 
-    ImGui::SetNextItemWidth(183);
-    ImGui::InputText("Path to save", dumpImput, 256);
-
-    ImGui::SetNextItemWidth(150);
-    ImGui::InputInt("Tick iterations", &tickInput);
-
-    if (ImGui::Button("Do command")) {
-        if(tickInput != -1) {
-            input.push_back(std::pair<std::string, std::string>{"tick",std::to_string(tickInput)});
-        }
-        if(strcmp(dumpImput, "\0") != 0) {
-            input.push_back(std::pair<std::string, std::string>{"dump", dumpImput});
-        }
+    if(ImGui::Button("Dump university")) {
+        input.push_back(std::pair<std::string, std::string>{"dump", "\0"});
     }
 
+    ImGui::SetNextItemWidth(150);
+    if(ImGui::InputInt("Tick iterations", &tickInput)) {
+        if (ImGui::IsItemDeactivatedAfterEdit() && tickInput > 0) {
+            input.push_back(std::pair<std::string, std::string>{"tick",std::to_string(tickInput)});
+        }
+    }
     ImGui::End();
-
-
+    
     return input;
 }
 
 void ImGuiView::PrintMap(std::vector<std::vector<bool>> map) {
-    ImGui::SetNextWindowPos(ImVec2(350, 0));
-    ImGui::SetNextWindowSize(ImVec2(930, 720)); 
-    ImGui::Begin("Map:", nullptr, ImGuiWindowFlags_NoTitleBar);
+    int windowPosX = 350 + 100;
+    int windowPosY = 100;
 
-
-
-    ImGui::End();
+    for (size_t y = 0; y < map.size(); y++)
+    {
+        for (size_t x = 0; x < map[0].size(); x++)
+        {
+            DrawCell(x, y, map[y][x], map.size(), map[0].size(), windowPosX, windowPosY);
+        }
+        
+    } 
 }
 void ImGuiView::PrintCompletedMessage(std::string message) {
     float popupStartTime = ImGui::GetTime();
@@ -177,4 +192,8 @@ void ImGuiView::PrintCompletedMessage(std::string message) {
         }
         Render();
     }
+}
+
+void ImGuiView::Delay(int i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(i));
 }

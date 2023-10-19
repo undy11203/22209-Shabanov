@@ -18,5 +18,5 @@ public:
     void PrintReturnCommand();
     void PrintErrorCommand(std::string command);
     void PrintError(std::string error);
-    void Sleep(int i);
+    void Delay(int i);
 };

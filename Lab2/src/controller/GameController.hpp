@@ -15,7 +15,7 @@ private:
     int m_offlineIteratins = 0;
 public:
     GameController();
-    GameController(int argc, std::vector<std::string>& args);
+    GameController(std::vector<std::string>& args);
     ~GameController() = default;
     void RunAppInConsole();
     void RunAppInImGui();

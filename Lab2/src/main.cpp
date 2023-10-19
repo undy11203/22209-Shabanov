@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <controller/GameController.hpp>
 
@@ -12,19 +13,19 @@ enum TypeGame {
     Online
 };
 
-void ConfigGame(TypeView& typeView, TypeGame& typeGame, int argc, std::vector<std::string> args) {
+void ConfigGame(TypeView& typeView, TypeGame& typeGame, std::vector<std::string>& args) {
     typeView = Console;
     typeGame = Online;
 
-    for (size_t i = 1; i < argc; i++)
+    for (size_t i = 1; i < args.size(); i++)
     {
         if (args[i] == "-o" || args[i].find("--output") != std::string::npos) {
             typeGame = Offline;
         } else if(args[i] == "--gui") {
             typeView = Gui;
+            args.erase(args.begin()+i);
         }
-    }
-    
+    }      
 }
 
 int main(int argc, char* argv[]) {
@@ -33,9 +34,9 @@ int main(int argc, char* argv[]) {
     TypeView typeView;
     TypeGame typeGame;
 
-    ConfigGame(typeView, typeGame, argc, args);
+    ConfigGame(typeView, typeGame, args);
 
-    GameController gameController(argc, args);
+    GameController gameController(args);
 
     if(typeGame == Online && typeView == Gui){
         gameController.RunAppInImGui();

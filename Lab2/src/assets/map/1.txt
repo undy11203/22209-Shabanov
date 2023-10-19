@@ -1,7 +1,12 @@
-# life 1.02
-#N MyUniversity
+#Life 1.06
+#N Test universe
 #R B3/S23
-#S 10/15
-3 3
+#S 20/20
 2 4
+2 5
+3 4
 3 5
+4 2
+4 3
+5 2
+5 3

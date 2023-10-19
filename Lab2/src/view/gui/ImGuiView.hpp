@@ -25,6 +25,7 @@ public:
     void PrintInfo(std::string name, std::pair<std::vector<int>, std::vector<int>> rules);
     void PrintMap(std::vector<std::vector<bool>> map);
     void PrintCompletedMessage(std::string message);
+    void Delay(int i);
 };
 
 

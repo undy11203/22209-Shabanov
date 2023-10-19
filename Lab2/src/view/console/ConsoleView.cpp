@@ -94,6 +94,6 @@ void ConsoleView::PrintError(std::string error) {
     std::cout << error << std::endl;
 }
 
-void ConsoleView::Sleep(int i){
-    std::this_thread::sleep_for(std::chrono::seconds(i));
+void ConsoleView::Delay(int i){
+    std::this_thread::sleep_for(std::chrono::milliseconds(i));
 }

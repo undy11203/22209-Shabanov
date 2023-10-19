@@ -1,47 +1,63 @@
 #include "GameController.hpp"
 
-GameController::GameController(int argc, std::vector<std::string>& args) : m_consoleView{}, m_imGuiView{} {
+#include <iostream>
+#include <cstring>
+
+GameController::GameController(std::vector<std::string>& args) : m_consoleView{}, m_imGuiView{} {
     std::string inputPath = "";
     std::string outputPath = "";
 
-    for (int i = 1; i < argc; ++i) {
+    for (int i = 1; i < args.size(); ++i) {
         if (args[i] == "-i") {
-            if (i + 1 < argc) {
+            if (i + 1 < args.size()) {
                 m_offlineIteratins = std::stoi(args[i + 1]);
                 i++;
             } else {
-                m_consoleView.PrintError("Ошибка: нет значения после -i");
+                m_consoleView.PrintError("Warning: no value after -i\nUsed default");
+                m_consoleView.Delay(500);
             }
         } else if(args[i].find("--iterations") != std::string::npos) {
             if(stoi(args[i].substr(13)) != std::string::npos) {
                 m_offlineIteratins = stoi(args[i].substr(13));
             }else {
-                m_consoleView.PrintError("Ошибка: нет значения после --iterations");
+                m_consoleView.PrintError("Warning: no value after --iterations\nUsed default");
+                m_consoleView.Delay(500);
             }
         } else if (args[i] == "-o") {
-            if (i + 1 < argc) {
-                outputPath = args[i + 1];
+            if (i + 1 < args.size()) {
+                if (m_fileModel.isFileExists(args[i+1]))
+                {
+                    outputPath = args[i + 1];
+                }else {
+                    m_consoleView.PrintError("Warning: path dont exists\nUsed default");
+                    m_consoleView.Delay(500);
+                }
                 i++;
             } else {
-                m_consoleView.PrintError("Ошибка: нет значения после -o");
+                m_consoleView.PrintError("Warning: no value after -o\nUsed default");
+                m_consoleView.Delay(500);
             }
         }else if(args[i].find("--output") != std::string::npos) {
             if(stoi(args[i].substr(9)) != std::string::npos) {
-                outputPath = args[i].substr(9);
+                std::string path = args[i].substr(9);
+                if (m_fileModel.isFileExists(path))
+                {
+                    outputPath = path;
+                }else {
+                    m_consoleView.PrintError("Warning: path dont exists\nUsed default");
+                    m_consoleView.Delay(500);
+                }
             }else {
-                m_consoleView.PrintError("Ошибка: нет значения после --output");
+                m_consoleView.PrintError("Warning: no value after --output\nUsed default");
+                m_consoleView.Delay(500);
             }
         } else {
             inputPath = args[i];
         }
     }
 
-    if(outputPath != ""){
-        m_fileModel = FileModel(inputPath, outputPath);
-        m_gameModel = GameModel(m_fileModel.GetAliveFromFile(), m_fileModel.GetSizeFromFile(), m_fileModel.GetRulesFromFile(), m_fileModel.GetNameUniveristyFromFile());
-    }else {
-        m_gameModel = GameModel(m_fileModel.GetAliveFromFile(), m_fileModel.GetSizeFromFile(), m_fileModel.GetRulesFromFile(), m_fileModel.GetNameUniveristyFromFile());
-    }
+    m_fileModel = FileModel(inputPath, outputPath);
+    m_gameModel = GameModel(m_fileModel.GetAliveFromFile(), m_fileModel.GetSizeFromFile(), m_fileModel.GetRulesFromFile(), m_fileModel.GetNameUniveristyFromFile());
 }
 
 void GameController::RunAppInConsole() {
@@ -68,8 +84,9 @@ void GameController::RunAppInConsole() {
                 m_gameModel.Update();
                 
                 m_consoleView.Clear();
+                m_consoleView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
                 m_consoleView.PrintMap(m_gameModel.GetMap());
-                m_consoleView.Sleep(1);
+                m_consoleView.Delay(1000);
             }
         } else if (command.first == "exit") {
             break;
@@ -102,14 +119,18 @@ void GameController::RunAppInImGui() {
                 m_fileModel.SaveToFile(m_gameModel.GetMap());
                 m_imGuiView.PrintCompletedMessage("Save complete!");
             } else if(commandArray[i].first == "tick") {
-                for (size_t i = 0; i < stoi(commandArray[i].second); i++)
+                for (size_t j = 0; j < stoi(commandArray[i].second) && !m_imGuiView.ShouldClose(); j++)
                 {
-                    /* code */
+                    m_gameModel.Update();
+
+                    m_imGuiView.Update();
+                    m_imGuiView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
+                    m_imGuiView.PrintMap(m_gameModel.GetMap());
+                    m_imGuiView.Render();
+                    m_imGuiView.Delay(500);
                 }
-                
             }
         }
-        
         m_imGuiView.Render();
     }
 }

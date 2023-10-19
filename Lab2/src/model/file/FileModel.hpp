@@ -1,13 +1,14 @@
 #pragma once
 
 #include <fstream>
+#include <filesystem>
 #include <string>
 #include <vector>
 
 class FileModel {
 private:
-  std::string m_inputPath = "../assets/map/1.txt";
-  std::string m_outputPath = "../assets/out/1.txt";
+  std::filesystem::path m_inputPath = "../assets/map/1.txt";
+  std::filesystem::path m_outputPath = "../assets/out/1.txt";
 
 public:
   FileModel() = default;
@@ -19,4 +20,5 @@ public:
             std::vector<int>>       GetRulesFromFile();
   std::vector<std::pair<int, int>>  GetAliveFromFile();
   void                              SaveToFile(std::vector<std::vector<bool>> map);
+  bool isFileExists(std::string& filePath);
 };
