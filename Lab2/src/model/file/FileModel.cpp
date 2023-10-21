@@ -11,8 +11,9 @@ FileModel::FileModel(std::string inputPath, std::string outputPath){
 std::string FileModel::GetNameUniveristyFromFile() {
   std::fstream fs(m_inputPath);
   std::string line;
-  std::getline(fs, line);
-  std::getline(fs, line);
+  while(std::getline(fs, line)){
+    if(line.find("#N") == 0) break;
+  }
 
   int startIndex = line.find(" ") + 1;
   int stopIndex = line.length();
@@ -26,10 +27,9 @@ std::pair<int, int> FileModel::GetSizeFromFile() {
 
   std::fstream fs(m_inputPath);
   std::string line;
-  std::getline(fs, line);
-  std::getline(fs, line);
-  std::getline(fs, line);
-  std::getline(fs, line);
+  while(std::getline(fs, line)){
+    if(line.find("#S") == 0) break;
+  }
 
   int startIndex = line.find(" ") + 1;
   int endIndex = line.find("/");
@@ -51,9 +51,9 @@ std::pair<std::vector<int>, std::vector<int>> FileModel::GetRulesFromFile() {
 
   std::fstream fs(m_inputPath);
   std::string line;
-  std::getline(fs, line);
-  std::getline(fs, line);
-  std::getline(fs, line);
+  while(std::getline(fs, line)){
+    if(line.find("#R") == 0) break;
+  }
 
   int index = line.find("B") + 1;
 
@@ -81,12 +81,11 @@ std::vector<std::pair<int, int>> FileModel::GetAliveFromFile() {
 
   std::fstream fs(m_inputPath);
   std::string line;
-  std::getline(fs, line);
-  std::getline(fs, line);
-  std::getline(fs, line);
-  std::getline(fs, line);
+  while(std::getline(fs, line)){
+    if(line.find("#") == std::string::npos) break;
+  }
 
-  while (std::getline(fs, line)) {
+  do {
     std::pair<int, int> aliveCell;
 
     int startIndex = 0;
@@ -100,19 +99,33 @@ std::vector<std::pair<int, int>> FileModel::GetAliveFromFile() {
         std::stoi(line.substr(startIndex, stopIndex - startIndex));
 
     alive.push_back(aliveCell);
-  }
+  } while (std::getline(fs, line));
 
   fs.close();
 
   return alive;
 }
-void FileModel::SaveToFile(std::vector<std::vector<bool>> map) {
+void FileModel::SaveToFile(std::string name, std::pair<std::vector<int>, std::vector<int>> rules, std::vector<std::vector<bool>> map) {
   std::ofstream fs(m_outputPath);
+
+  fs << "Name university: " << name << std::endl;
+  fs << "Rules: B";
+  for (size_t i = 0; i < rules.first.size(); i++)
+  {
+    fs << rules.first[i];
+  }
+  fs << "/S";
+  for (size_t i = 0; i < rules.second.size(); i++)
+  {
+    fs << rules.second[i];
+  }
+  fs << std::endl;
+  
   for (size_t i = 0; i < map[0].size(); i++)
   {
     fs << "==";
   }
-  fs << "==\n";
+  fs << "==" << std::endl;
   
   for (const std::vector<bool> &row : map) {
     fs << "|";
@@ -120,14 +133,14 @@ void FileModel::SaveToFile(std::vector<std::vector<bool>> map) {
       fs << (cell ? "()" : "  ");
     }
     fs << "|";
-    fs << '\n';
+    fs << std::endl;
   }
 
   for (size_t i = 0; i < map[0].size(); i++)
   {
     fs << "==";
   }
-  fs << "==\n";
+  fs << "==" << std::endl;
 }
 
 bool FileModel::isFileExists(std::string& filePath) {

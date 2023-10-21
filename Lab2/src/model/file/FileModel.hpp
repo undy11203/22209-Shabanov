@@ -19,6 +19,7 @@ public:
   std::pair<std::vector<int>, 
             std::vector<int>>       GetRulesFromFile();
   std::vector<std::pair<int, int>>  GetAliveFromFile();
-  void                              SaveToFile(std::vector<std::vector<bool>> map);
+  void                              SaveToFile(std::string name, std::pair<std::vector<int>, std::vector<int>> rules, std::vector<std::vector<bool>> map);
   bool isFileExists(std::string& filePath);
+  bool isFileCorrect(std::string& uncorrectLine);
 };

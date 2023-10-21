@@ -1,3 +1,5 @@
+Name university: Test universe
+Rules: B3/S23
 ==========================================
 |                                        |
 |                                        |

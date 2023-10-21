@@ -55,7 +55,7 @@ GameController::GameController(std::vector<std::string>& args) : m_consoleView{}
             inputPath = args[i];
         }
     }
-
+    
     m_fileModel = FileModel(inputPath, outputPath);
     m_gameModel = GameModel(m_fileModel.GetAliveFromFile(), m_fileModel.GetSizeFromFile(), m_fileModel.GetRulesFromFile(), m_fileModel.GetNameUniveristyFromFile());
 }
@@ -68,7 +68,7 @@ void GameController::RunAppInConsole() {
         m_consoleView.PrintMap(m_gameModel.GetMap());
         std::pair<std::string, std::string> command = m_consoleView.GetInput();
         if (command.first == "dump") {
-            m_fileModel.SaveToFile(m_gameModel.GetMap());
+            m_fileModel.SaveToFile(m_gameModel.GetName(), m_gameModel.GetRules(), m_gameModel.GetMap());
         } else if (command.first == "tick" || command.first == "t") {
             int ticks = 1;
             try
@@ -116,9 +116,11 @@ void GameController::RunAppInImGui() {
         {
             if (commandArray[i].first == "dump")
             {
-                m_fileModel.SaveToFile(m_gameModel.GetMap());
+                m_fileModel.SaveToFile(m_gameModel.GetName(), m_gameModel.GetRules(), m_gameModel.GetMap());
+                m_imGuiView.Render();
                 m_imGuiView.PrintCompletedMessage("Save complete!");
             } else if(commandArray[i].first == "tick") {
+                m_imGuiView.Render();
                 for (size_t j = 0; j < stoi(commandArray[i].second) && !m_imGuiView.ShouldClose(); j++)
                 {
                     m_gameModel.Update();
@@ -140,6 +142,6 @@ void GameController::RunOfflineApp() {
     {
         m_gameModel.Update();
     }
-    m_fileModel.SaveToFile(m_gameModel.GetMap());
+    m_fileModel.SaveToFile(m_gameModel.GetName(), m_gameModel.GetRules(), m_gameModel.GetMap());
     m_consoleView.PrintCompletedMessage("Game save");    
 }
