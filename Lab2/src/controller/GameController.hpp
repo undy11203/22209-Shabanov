@@ -1,9 +1,9 @@
 #pragma once
 
-#include <console/ConsoleView.hpp>
-#include <gui/ImGuiView.hpp>
-#include <file/FileModel.hpp>
-#include <game_logic/GameModel.hpp>
+#include <FileModel.hpp>
+#include <GameModel.hpp>
+#include <ConsoleView.hpp>
+#include <ImGuiView.hpp>
 
 class GameController
 {

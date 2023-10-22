@@ -8,7 +8,9 @@ file(GLOB SOURCE_FILES
         "${CMAKE_CURRENT_SOURCE_DIR}/file/*.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/file/*.cpp"
         )
+        
+add_library(model STATIC ${SOURCE_FILES})
 
-add_library(model ${SOURCE_FILES})
-
-target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/file)
+target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/game_logic)
+target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/game_logic/include)

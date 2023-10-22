@@ -2,7 +2,7 @@
 #include <vector>
 #include <iostream>
 
-#include <controller/GameController.hpp>
+#include "controller/GameController.hpp"
 
 enum TypeView{
     Console,
