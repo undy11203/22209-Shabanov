@@ -1,5 +1,5 @@
 Name university: Test universe
-Rules: B3/S23
+Rules: B123456/S123456
 ==========================================
 |                                        |
 |                                        |
