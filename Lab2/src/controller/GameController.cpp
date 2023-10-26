@@ -67,10 +67,7 @@ GameController::GameController(std::vector<std::string> &args)
     std::vector<std::string>
         noExistLine = m_fileModel.ErrorInPoint();
     if (!noExistLine.empty()) {
-        std::string error = "";
         for (size_t i = 0; i < noExistLine.size(); i++) {
-            error +=
-                "Warning: error in point" + noExistLine[i] + "\n";
             if (noExistLine[i] == "#N") {
                 name = "Default name";
             } else if (noExistLine[i] == "#R") {
@@ -79,13 +76,24 @@ GameController::GameController(std::vector<std::string> &args)
                 size = {100, 200};
             }
         }
-        m_consoleView.PrintError(error);
-        m_consoleView.Delay(500);
     }
 
     m_gameModel =
         GameModel(m_fileModel.GetAliveFromFile(), size,
                   rules, name);
+
+    std::string error = "";
+    noExistLine = m_fileModel.ErrorInPoint();
+    if (!noExistLine.empty()) {
+        for (size_t i = 0; i < noExistLine.size(); i++) {
+            error +=
+                "Warning: error in point " + noExistLine[i] + "\n";
+        }
+    }
+    if (error != "") {
+        m_consoleView.PrintError(error);
+        m_consoleView.Delay(500);
+    }
 }
 
 void GameController::RunAppInConsole() {

@@ -125,7 +125,7 @@ std::vector<std::pair<int, int>> FileModel::GetAliveFromFile() {
             std::stoi(line.substr(startIndex, stopIndex - startIndex));
 
         if (auto search = alive.find(aliveCell); search != alive.end()) {
-            m_errorPoint.push_back(aliveCell.first + "/" + aliveCell.second);
+            m_errorPoint.push_back(std::to_string(aliveCell.first) + "/" + std::to_string(aliveCell.second));
         } else {
             alive.insert(aliveCell);
         }
