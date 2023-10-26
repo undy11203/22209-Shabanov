@@ -19,3 +19,6 @@
 [submodule "Lab2/src/vendor/imgui"]
 	path = Lab2/src/vendor/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "Lab1/googletest"]
+	path = Lab1/googletest
+	url = https://github.com/google/googletest.git
