@@ -18,11 +18,7 @@ std::vector<std::vector<bool>> GameModel::GetMap() {
 }
 
 void GameModel::Update() {
-    try {
-        m_board.Evolve(m_rules);
-    } catch (const std::exception& e) {
-        std::cout << e.what();
-    }
+    m_board.Evolve(m_rules);
 }
 
 std::string GameModel::GetName() { return m_name; }

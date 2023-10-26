@@ -11,6 +11,11 @@ file(GLOB SOURCE_FILES
         
 add_library(model STATIC ${SOURCE_FILES})
 
+
+target_compile_options(model PUBLIC --coverage)
+target_compile_options(model PUBLIC -fprofile-arcs)
+target_compile_options(model PUBLIC -ftest-coverage)
+
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/file)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/game_logic)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/game_logic/include)

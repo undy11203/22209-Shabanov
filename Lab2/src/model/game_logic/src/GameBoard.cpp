@@ -3,8 +3,8 @@
 #include <iostream>
 
 namespace {
-int mod(int a, int b) { return (a % b + b) % b; }
-}  // namespace
+    int mod(int a, int b) { return (a % b + b) % b; }
+} // namespace
 
 GameBoard::GameBoard() : m_width{3}, m_height{5} {
     m_field =
@@ -30,7 +30,8 @@ void GameBoard::Evolve(const GameRules &rules) {
                 int countForSurvive = 0;
                 for (int i = -1; i <= 1; i++) {
                     for (int j = -1; j <= 1; j++) {
-                        if (j == 0 && i == 0) continue;
+                        if (j == 0 && i == 0)
+                            continue;
                         countForSurvive =
                             m_field[mod(x + i, m_width)][mod(y + j, m_height)]
                                         .GetState() == true
@@ -49,7 +50,8 @@ void GameBoard::Evolve(const GameRules &rules) {
                 int countForBirth = 0;
                 for (int i = -1; i <= 1; i++) {
                     for (int j = -1; j <= 1; j++) {
-                        if (j == 0 && i == 0) continue;
+                        if (j == 0 && i == 0)
+                            continue;
                         countForBirth =
                             m_field[mod(x + i, m_width)][mod(y + j, m_height)]
                                         .GetState() == true
@@ -69,7 +71,8 @@ void GameBoard::Evolve(const GameRules &rules) {
 
     for (int x = 0; x < m_width; x++) {
         for (int y = 0; y < m_height; y++) {
-            if (m_field[x][y].ExistedRequest()) m_field[x][y].ChangeState();
+            if (m_field[x][y].ExistedRequest())
+                m_field[x][y].ChangeState();
         }
     }
 }
@@ -81,6 +84,5 @@ std::vector<std::vector<bool>> GameBoard::GetField() {
             map[i][j] = m_field[i][j].GetState();
         }
     }
-
     return map;
 }
