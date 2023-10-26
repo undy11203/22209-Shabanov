@@ -1,6 +1,6 @@
 #include "ImGuiView.hpp"
 
-#include "../../vendor/glad/glad.h"
+#include <glad.h>
 
 #include <GLFW/glfw3.h>
 #include <imgui.h>
@@ -9,7 +9,6 @@
 #include <backends/imgui_impl_opengl3.h>
 
 #include <chrono>
-#include <iostream>
 #include <thread>
 
 namespace {

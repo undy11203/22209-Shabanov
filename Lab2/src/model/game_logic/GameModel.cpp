@@ -1,6 +1,5 @@
 #include "GameModel.hpp"
 
-#include <iostream>
 #include <utility>
 
 GameModel::GameModel() : m_board{}, m_rules{} {}

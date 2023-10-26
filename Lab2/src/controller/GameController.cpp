@@ -1,7 +1,6 @@
 #include "GameController.hpp"
 
 #include <cstring>
-#include <iostream>
 
 GameController::GameController(std::vector<std::string> &args)
     : m_consoleView{}, m_imGuiView{} {

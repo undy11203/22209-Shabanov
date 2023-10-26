@@ -1,7 +1,7 @@
 #Life 1.06
 #N Test universe
 #R B3/S23
-#S 4/4
+#S 20/20
 1 1
 1 2
 1 3

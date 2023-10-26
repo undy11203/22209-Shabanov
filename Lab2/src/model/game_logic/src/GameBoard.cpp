@@ -1,7 +1,5 @@
 #include "../includes/GameBoard.hpp"
 
-#include <iostream>
-
 namespace {
     int mod(int a, int b) { return (a % b + b) % b; }
 } // namespace

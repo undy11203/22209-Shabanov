@@ -1,7 +1,6 @@
 #include "FileModel.hpp"
 
 #include <cstring>
-#include <iostream>
 #include <unordered_set>
 
 namespace {
