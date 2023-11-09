@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
+set (CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 file(GLOB SOURCE_FILES
 		"${CMAKE_CURRENT_SOURCE_DIR}/game_logic/includes/*.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/game_logic/src/*.cpp"
@@ -11,10 +14,9 @@ file(GLOB SOURCE_FILES
         
 add_library(model STATIC ${SOURCE_FILES})
 
-
-target_compile_options(model PUBLIC --coverage)
-target_compile_options(model PUBLIC -fprofile-arcs)
-target_compile_options(model PUBLIC -ftest-coverage)
+# target_compile_options(model PUBLIC --coverage)
+# target_compile_options(model PUBLIC -fprofile-arcs)
+# target_compile_options(model PUBLIC -ftest-coverage)
 
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/file)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/game_logic)

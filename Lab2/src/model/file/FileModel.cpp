@@ -64,10 +64,10 @@ std::pair<int, int> FileModel::GetSizeFromFile() {
     return size;
 }
 
-std::pair<std::vector<int>, std::vector<int>> FileModel::GetRulesFromFile() {
-    std::vector<int> birth;
-    std::vector<int> survive;
-    std::pair<std::vector<int>, std::vector<int>> rule;
+std::pair<std::bitset<8>, std::bitset<8>> FileModel::GetRulesFromFile() {
+    std::bitset<8> birth;
+    std::bitset<8> survive;
+    std::pair<std::bitset<8>, std::bitset<8>> rule;
 
     std::fstream fs(m_inputPath);
     std::string line;
@@ -82,14 +82,14 @@ std::pair<std::vector<int>, std::vector<int>> FileModel::GetRulesFromFile() {
     int index = line.find("B") + 1;
 
     while (line[index] != '/') {
-        birth.push_back(line[index] - '0');
+        birth |= 1 << line[index] - '0' - 1;
         index++;
     }
 
     index = line.find("S") + 1;
 
     while (index < line.length()) {
-        survive.push_back(line[index] - '0');
+        survive |= 1 << line[index] - '0' - 1;
         index++;
     }
 
@@ -138,18 +138,18 @@ std::vector<std::pair<int, int>> FileModel::GetAliveFromFile() {
     return result;
 }
 void FileModel::SaveToFile(std::string name,
-                           std::pair<std::vector<int>, std::vector<int>> rules,
+                           std::pair<std::bitset<8>, std::bitset<8>> rules,
                            std::vector<std::vector<bool>> map) {
     std::ofstream fs(m_outputPath);
 
     fs << "Name university: " << name << std::endl;
     fs << "Rules: B";
     for (size_t i = 0; i < rules.first.size(); i++) {
-        fs << rules.first[i];
+        fs << rules.first.test(i) ? std::to_string(i) : "";
     }
     fs << "/S";
     for (size_t i = 0; i < rules.second.size(); i++) {
-        fs << rules.second[i];
+        fs << rules.second.test(i) ? std::to_string(i) : "";
     }
     fs << std::endl;
 

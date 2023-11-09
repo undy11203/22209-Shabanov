@@ -1,5 +1,6 @@
 #pragma once
 
+#include <bitset>
 #include <filesystem>
 #include <fstream>
 #include <string>
@@ -17,10 +18,10 @@ public:
     ~FileModel() = default;
     std::string GetNameUniveristyFromFile();
     std::pair<int, int> GetSizeFromFile();
-    std::pair<std::vector<int>, std::vector<int>> GetRulesFromFile();
+    std::pair<std::bitset<8>, std::bitset<8>> GetRulesFromFile();
     std::vector<std::pair<int, int>> GetAliveFromFile();
     void SaveToFile(std::string name,
-                    std::pair<std::vector<int>, std::vector<int>> rules,
+                    std::pair<std::bitset<8>, std::bitset<8>> rules,
                     std::vector<std::vector<bool>> map);
     bool isFileExists(std::string &filePath);
     std::vector<std::string> ErrorInPoint();

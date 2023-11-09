@@ -122,7 +122,7 @@ void ImGuiView::Render() {
 int ImGuiView::ShouldClose() { return glfwWindowShouldClose(m_window); }
 
 void ImGuiView::PrintInfo(std::string name,
-                          std::pair<std::vector<int>, std::vector<int>> rules) {
+                          std::pair<std::bitset<8>, std::bitset<8>> rules) {
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(350, 150));
 

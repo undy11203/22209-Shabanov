@@ -5,7 +5,6 @@
 #include <sstream>
 #include <thread>
 
-
 std::pair<std::string, std::string> ConsoleView::GetInput() {
     std::cout << "If you don't know command, input help" << std::endl;
     std::cout << "Input command: ";
@@ -29,15 +28,15 @@ void ConsoleView::Clear() {
 }
 
 void ConsoleView::PrintInfo(
-    std::string name, std::pair<std::vector<int>, std::vector<int>> rules) {
+    std::string name, std::pair<std::bitset<8>, std::bitset<8>> rules) {
     std::cout << "Name University: " << name << std::endl;
     std::cout << "Rules: B";
     for (size_t i = 0; i < rules.first.size(); i++) {
-        std::cout << rules.first.at(i);
+        std::cout << (rules.first.test(i) ? std::to_string(i + 1) : "");
     }
     std::cout << " / S";
     for (size_t i = 0; i < rules.second.size(); i++) {
-        std::cout << rules.second.at(i);
+        std::cout << (rules.second.test(i) ? std::to_string(i + 1) : "");
     }
     std::cout << std::endl;
 }
@@ -48,9 +47,9 @@ void ConsoleView::PrintMap(std::vector<std::vector<bool>> map) {
     }
     std::cout << std::endl;
 
-    for (const auto& row : map) {
+    for (const auto &row : map) {
         std::cout << "|";
-        for (const auto& cell : row) {
+        for (const auto &cell : row) {
             std::cout << (cell == true ? "()" : "  ");
         }
         std::cout << "|";

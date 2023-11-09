@@ -1,16 +1,22 @@
 #pragma once
 
+#include <bitset>
 #include <vector>
+
+using Point = struct Point {
+    int x;
+    int y;
+};
 
 class GameRules {
 private:
-  std::vector<int> m_cellForBirth;
-  std::vector<int> m_cellForSurvive;
+    std::bitset<8> m_cellForBirth;
+    std::bitset<8> m_cellForSurvive;
 
 public:
-  GameRules();
-  GameRules(std::vector<int> cellForBirth, std::vector<int> cellForSurive);
-  ~GameRules();
-  std::vector<int> GetRuleAboutBirth() const;
-  std::vector<int> GetRuleAboutSurvive() const;
+    GameRules();
+    GameRules(std::bitset<8> cellForBirth, std::bitset<8> cellForSurive);
+    ~GameRules();
+    std::bitset<8> GetRuleAboutBirth() const;
+    std::bitset<8> GetRuleAboutSurvive() const;
 };

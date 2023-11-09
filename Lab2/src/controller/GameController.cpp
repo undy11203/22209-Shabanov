@@ -1,5 +1,6 @@
 #include "GameController.hpp"
 
+#include <bitset>
 #include <cstring>
 
 GameController::GameController(std::vector<std::string> &args)
@@ -62,7 +63,7 @@ GameController::GameController(std::vector<std::string> &args)
 
     m_fileModel = FileModel(inputPath, outputPath);
     std::pair<int, int> size = m_fileModel.GetSizeFromFile();
-    std::pair<std::vector<int>, std::vector<int>> rules = m_fileModel.GetRulesFromFile();
+    std::pair<std::bitset<8>, std::bitset<8>> rules = m_fileModel.GetRulesFromFile();
     std::string name = m_fileModel.GetNameUniveristyFromFile();
     std::vector<std::string>
         noExistLine = m_fileModel.ErrorInPoint();
@@ -71,7 +72,7 @@ GameController::GameController(std::vector<std::string> &args)
             if (noExistLine[i] == "#N") {
                 name = "Default name";
             } else if (noExistLine[i] == "#R") {
-                rules = {{1, 2, 3, 4, 5, 6}, {1, 2, 3, 4, 5, 6}};
+                rules = {0b00111111, 0b00111111};
             } else if (noExistLine[i] == "#S") {
                 size = {100, 200};
             }

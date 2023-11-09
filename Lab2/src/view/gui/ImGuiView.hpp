@@ -1,8 +1,10 @@
 #pragma once
 
+#include <bitset>
 #include <string>
 #include <utility>
 #include <vector>
+
 
 struct GLFWwindow;
 
@@ -25,7 +27,7 @@ public:
     int ShouldClose();
     std::pair<bool, int> PrintGetInputBar();
     void PrintInfo(std::string name,
-                   std::pair<std::vector<int>, std::vector<int>> rules);
+                   std::pair<std::bitset<8>, std::bitset<8>> rules);
     void PrintMap(std::vector<std::vector<bool>> map);
     void PrintCompletedMessage(std::string message);
     void Delay(int i);
