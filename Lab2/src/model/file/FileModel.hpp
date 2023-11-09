@@ -8,9 +8,15 @@
 
 class FileModel {
 private:
-    std::filesystem::path m_inputPath = "../assets/map/1.txt";
-    std::filesystem::path m_outputPath = "../assets/out/1.txt";
+    std::filesystem::path m_inputPath;
+    std::filesystem::path m_outputPath;
     std::vector<std::string> m_errorPoint;
+
+    enum Type {
+        IN,
+        OUT
+    };
+    void CreateDefaultFile(std::string name, Type type);
 
 public:
     FileModel() = default;

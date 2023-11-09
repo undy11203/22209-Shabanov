@@ -12,12 +12,34 @@ namespace {
 } // namespace
 
 FileModel::FileModel(std::string inputPath, std::string outputPath) {
-    m_inputPath = strcmp(inputPath.data(), "") != 0
-                      ? std::filesystem::path(inputPath)
-                      : m_inputPath;
-    m_outputPath = strcmp(outputPath.data(), "") != 0
-                       ? std::filesystem::path(outputPath)
-                       : m_outputPath;
+    if (strcmp(inputPath.data(), "")) {
+        m_inputPath = std::filesystem::path(inputPath);
+    } else {
+        CreateDefaultFile("in.txt", IN);
+        m_inputPath = "in.txt";
+    }
+
+    if (strcmp(outputPath.data(), "")) {
+        m_outputPath = std::filesystem::path(outputPath);
+    } else {
+        CreateDefaultFile("out.txt", OUT);
+        m_outputPath = "out.txt";
+    }
+}
+
+void FileModel::CreateDefaultFile(std::string name, Type type) {
+    std::fstream fs(name, std::ios_base::out);
+
+    fs << "#Life 1.06" << std::endl
+       << "#N Test universe" << std::endl
+       << "#R B3 / S23" << std::endl
+       << "#S 20 / 20" << std::endl
+       << "1 1" << std::endl
+       << "1 2" << std::endl
+       << "1 3" << std::endl
+       << "2 2" << std::endl;
+
+    fs.close();
 }
 
 std::string FileModel::GetNameUniveristyFromFile() {
