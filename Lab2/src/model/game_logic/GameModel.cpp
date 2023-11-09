@@ -1,6 +1,5 @@
 #include "GameModel.hpp"
 
-#include <iostream>
 #include <utility>
 
 namespace {
@@ -46,15 +45,11 @@ void GameModel::Update() {
                 std::bitset<8> survive = m_rules.GetRuleAboutSurvive();
                 for (int i = 0; i < survive.size(); i++) {
                     if (survive.test(i) && countForSurvive == i + 1) {
-                        std::cout << "X: " << x << " Y: " << y << " " << m_board.GetState(x, y);
                         m_board.SetState(x, y);
-                        std::cout << m_board.GetState(x, y);
                         break;
                     }
                 }
-                std::cout << m_board.GetState(x, y);
                 m_board.SetState(x, y);
-                std::cout << m_board.GetState(x, y) << std::endl;
             } else {
                 int countForBirth = 0;
                 for (int i = -1; i <= 1; i++) {

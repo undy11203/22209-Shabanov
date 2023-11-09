@@ -1,11 +1,5 @@
 #include "../includes/GameBoard.hpp"
 
-#include <iostream>
-
-namespace {
-    int mod(int a, int b) { return (a % b + b) % b; }
-} // namespace
-
 GameBoard::GameBoard() : m_width{3}, m_height{5} {
     m_field =
         std::vector<StateCell>(m_width * m_height);
