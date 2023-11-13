@@ -5,6 +5,10 @@
 #include <sstream>
 #include <thread>
 
+int ConsoleView::ShouldClose() {
+    return 0;
+}
+
 std::pair<std::string, std::string> ConsoleView::GetInput() {
     std::cout << "If you don't know command, input help" << std::endl;
     std::cout << "Input command: ";
@@ -19,12 +23,6 @@ std::pair<std::string, std::string> ConsoleView::GetInput() {
     ss >> command >> value;
 
     return std::pair<std::string, std::string>(command, value);
-}
-
-void ConsoleView::Clear() {
-    for (size_t i = 0; i < 200; i++) {
-        std::cout << std::endl;
-    }
 }
 
 void ConsoleView::PrintInfo(
@@ -63,7 +61,32 @@ void ConsoleView::PrintMap(std::vector<std::vector<bool>> map) {
 }
 
 void ConsoleView::PrintCompletedMessage(std::string message) {
-    std::cout << "Success! " << std::endl;
+    std::cout << "Success! " << message << std::endl;
+}
+
+bool ConsoleView::IterationsCorrect(int number) {
+    if (number > 0) {
+        return true;
+    }
+    return false;
+}
+
+void ConsoleView::Render() {
+    std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+}
+
+void ConsoleView::Delay(int i) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(i));
+}
+
+bool ConsoleView::PrintStop() {
+    return false;
+}
+
+void ConsoleView::Update() {
+    for (size_t i = 0; i < 200; i++) {
+        std::cout << std::endl;
+    }
 }
 
 void ConsoleView::PrintHelp() {
@@ -88,8 +111,4 @@ void ConsoleView::PrintErrorCommand(std::string command) {
 
 void ConsoleView::PrintError(std::string error) {
     std::cout << error << std::endl;
-}
-
-void ConsoleView::Delay(int i) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(i));
 }

@@ -21,3 +21,5 @@ add_library(model STATIC ${SOURCE_FILES})
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/file)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/game_logic)
 target_include_directories(model PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/game_logic/include)
+
+target_link_libraries(model PUBLIC config)

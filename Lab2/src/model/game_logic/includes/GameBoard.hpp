@@ -12,7 +12,6 @@ private:
     };
 
     std::vector<StateCell> m_field;
-    std::vector<StateCell> m_newField;
     int m_width;
     int m_height;
 
@@ -25,5 +24,4 @@ public:
     int GetWidth();
     bool GetState(int x, int y);
     void SetState(int x, int y);
-    void SwapField();
 };

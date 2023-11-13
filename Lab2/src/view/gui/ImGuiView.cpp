@@ -9,6 +9,7 @@
 #include <backends/imgui_impl_opengl3.h>
 
 #include <chrono>
+#include <iostream>
 #include <thread>
 
 namespace {
@@ -34,9 +35,12 @@ ImGuiView::ImGuiView(/* args */)
     : m_window{nullptr},
       m_mapCheckbox{false},
       m_inputCheckbox{false},
-      m_infoCheckbox{false} {}
+      m_infoCheckbox{false} {
+    Start();
+}
 
-ImGuiView::~ImGuiView() {}
+ImGuiView::~ImGuiView() {
+}
 
 void ImGuiView::Start() {
     glfwInit();
@@ -114,9 +118,47 @@ void ImGuiView::Update() {
 }
 
 void ImGuiView::Render() {
+    float startTime = ImGui::GetTime();
+    float duration = 0.5f;
+
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     glfwSwapBuffers(m_window);
+
+    Delay(100);
+}
+
+std::pair<std::string, std::string> ImGuiView::GetInput() {
+    std::pair<std::string, std::string> input{"\0", "\0"};
+    int tickInput = 0;
+
+    ImGui::SetNextWindowPos(ImVec2(0, 150));
+    ImGui::SetNextWindowSize(ImVec2(350, 570));
+
+    ImGui::Begin("Input bar", nullptr, ImGuiWindowFlags_NoCollapse);
+
+    if (ImGui::Button("Dump university")) {
+        input.first = "dump";
+        input.second = "\0";
+        return input;
+    }
+
+    ImGui::SetNextItemWidth(150);
+    if (ImGui::InputInt("Tick iterations", &tickInput, 0)) {
+        if (ImGui::IsItemDeactivatedAfterEdit() && tickInput > -2) {
+            input.first = "tick";
+            input.second = std::to_string(tickInput);
+        }
+    }
+
+    ImGui::SetNextItemWidth(150);
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
+    ImGui::Text("Input -1 if want infinity loop");
+    ImGui::PopStyleColor();
+
+    ImGui::End();
+
+    return input;
 }
 
 int ImGuiView::ShouldClose() { return glfwWindowShouldClose(m_window); }
@@ -132,48 +174,22 @@ void ImGuiView::PrintInfo(std::string name,
     ImGui::Text("Rules: B");
     ImGui::SameLine();
     for (size_t i = 0; i < rules.first.size(); i++) {
-        ImGui::Text(std::to_string(rules.first[i]).data());
-        ImGui::SameLine();
+        if (rules.first.test(i)) {
+            ImGui::Text(std::to_string(i + 1).data());
+            ImGui::SameLine();
+        }
     }
     ImGui::Text(" / S");
     ImGui::SameLine();
     for (size_t i = 0; i < rules.second.size(); i++) {
-        ImGui::Text(std::to_string(rules.second[i]).data());
-        ImGui::SameLine();
+        if (rules.second.test(i)) {
+            ImGui::Text(std::to_string(i + 1).data());
+            ImGui::SameLine();
+        }
     }
     ImGui::Text("\n");
 
     ImGui::End();
-}
-
-std::pair<bool, int> ImGuiView::PrintGetInputBar() {
-    std::pair<bool, int> input{false, 0};
-    int tickInput = 0;
-
-    ImGui::SetNextWindowPos(ImVec2(0, 150));
-    ImGui::SetNextWindowSize(ImVec2(350, 570));
-
-    ImGui::Begin("Input bar", nullptr, ImGuiWindowFlags_NoCollapse);
-
-    if (ImGui::Button("Dump university")) {
-        input.first = true;
-    }
-
-    ImGui::SetNextItemWidth(150);
-    if (ImGui::InputInt("Tick iterations", &tickInput, 0)) {
-        if (ImGui::IsItemDeactivatedAfterEdit() && tickInput > -2) {
-            input.second = tickInput;
-        }
-    }
-
-    ImGui::SetNextItemWidth(150);
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 0.5f, 0.5f, 1.0f));
-    ImGui::Text("Input -1 if want infinity loop");
-    ImGui::PopStyleColor();
-
-    ImGui::End();
-
-    return input;
 }
 
 void ImGuiView::PrintMap(std::vector<std::vector<bool>> map) {
@@ -187,6 +203,7 @@ void ImGuiView::PrintMap(std::vector<std::vector<bool>> map) {
         }
     }
 }
+
 void ImGuiView::PrintCompletedMessage(std::string message) {
     float popupStartTime = ImGui::GetTime();
     float popupDuration = 0.5f;
@@ -211,11 +228,14 @@ void ImGuiView::PrintCompletedMessage(std::string message) {
     }
 }
 
-void ImGuiView::Delay(int i) {
-    std::this_thread::sleep_for(std::chrono::milliseconds(i));
+bool ImGuiView::IterationsCorrect(int number) {
+    if (number > 0 || number == -1) {
+        return true;
+    }
+    return false;
 }
 
-bool ImGuiView::PrintGetInputClose() {
+bool ImGuiView::PrintStop() {
     ImGui::SetNextWindowPos(ImVec2(0, 150));
     ImGui::SetNextWindowSize(ImVec2(350, 570));
 
@@ -228,4 +248,8 @@ bool ImGuiView::PrintGetInputClose() {
 
     ImGui::End();
     return false;
+}
+
+void ImGuiView::Delay(int i) {
+    std::this_thread::sleep_for(std::chrono::milliseconds(i));
 }

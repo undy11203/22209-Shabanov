@@ -3,15 +3,7 @@
 #include <vector>
 
 #include "controller/GameController.hpp"
-
-enum TypeView {
-    Console,
-    Gui
-};
-enum TypeGame {
-    Offline,
-    Online
-};
+#include <config.hpp>
 
 void ConfigGame(TypeView &typeView, TypeGame &typeGame, std::vector<std::string> &args) {
     typeView = Console;
@@ -37,10 +29,8 @@ int main(int argc, char *argv[]) {
 
     GameController gameController(args);
 
-    if (typeGame == Online && typeView == Gui) {
-        gameController.RunAppInImGui();
-    } else if (typeGame == Online && typeView == Console) {
-        gameController.RunAppInConsole();
+    if (typeGame == Online) {
+        gameController.RunApp(typeView);
     } else if (typeGame == Offline) {
         gameController.RunOfflineApp();
     }

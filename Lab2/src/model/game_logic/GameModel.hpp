@@ -3,13 +3,13 @@
 #include "includes/GameBoard.hpp"
 #include "includes/GameRules.hpp"
 
-
 #include <string>
 #include <utility>
 
 class GameModel {
 private:
-    GameBoard m_board;
+    GameBoard m_board1;
+    GameBoard m_board2;
     GameRules m_rules;
     std::string m_name;
 

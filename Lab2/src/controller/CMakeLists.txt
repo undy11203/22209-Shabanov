@@ -12,3 +12,5 @@ file(GLOB SOURCE_FILES
 add_library(controller STATIC ${SOURCE_FILES})
 
 target_link_libraries(controller PUBLIC model view)
+
+target_link_libraries(controller PUBLIC config)

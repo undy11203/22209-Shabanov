@@ -2,11 +2,19 @@
 
 #include <bitset>
 #include <cstring>
+#include <memory>
 
-GameController::GameController(std::vector<std::string> &args)
-    : m_consoleView{}, m_imGuiView{} {
+#include <iostream>
+
+#include <ConsoleView.hpp>
+#include <IView.hpp>
+#include <ImGuiView.hpp>
+
+GameController::GameController(std::vector<std::string> &args) {
     std::string inputPath = "";
     std::string outputPath = "";
+
+    std::unique_ptr<IView> view = std::make_unique<ConsoleView>();
 
     for (int i = 1; i < args.size(); ++i) {
         if (args[i] == "-i") {
@@ -14,32 +22,32 @@ GameController::GameController(std::vector<std::string> &args)
                 m_offlineIteratins = std::stoi(args[i + 1]);
                 i++;
             } else {
-                m_consoleView.PrintError(
+                view->PrintError(
                     "Warning: no value after -i\nUsed default");
-                m_consoleView.Delay(500);
+                view->Delay(500);
             }
         } else if (args[i].find("--iterations") != std::string::npos) {
             if (stoi(args[i].substr(13)) != std::string::npos) {
                 m_offlineIteratins = stoi(args[i].substr(13));
             } else {
-                m_consoleView.PrintError(
+                view->PrintError(
                     "Warning: no value after --iterations\nUsed default");
-                m_consoleView.Delay(500);
+                view->Delay(500);
             }
         } else if (args[i] == "-o") {
             if (i + 1 < args.size()) {
                 if (m_fileModel.isFileExists(args[i + 1])) {
                     outputPath = args[i + 1];
                 } else {
-                    m_consoleView.PrintError(
+                    view->PrintError(
                         "Warning: path dont exists\nUsed default");
-                    m_consoleView.Delay(500);
+                    view->Delay(500);
                 }
                 i++;
             } else {
-                m_consoleView.PrintError(
+                view->PrintError(
                     "Warning: no value after -o\nUsed default");
-                m_consoleView.Delay(500);
+                view->Delay(500);
             }
         } else if (args[i].find("--output") != std::string::npos) {
             if (stoi(args[i].substr(9)) != std::string::npos) {
@@ -47,14 +55,14 @@ GameController::GameController(std::vector<std::string> &args)
                 if (m_fileModel.isFileExists(path)) {
                     outputPath = path;
                 } else {
-                    m_consoleView.PrintError(
+                    view->PrintError(
                         "Warning: path dont exists\nUsed default");
-                    m_consoleView.Delay(500);
+                    view->Delay(500);
                 }
             } else {
-                m_consoleView.PrintError(
+                view->PrintError(
                     "Warning: no value after --output\nUsed default");
-                m_consoleView.Delay(500);
+                view->Delay(500);
             }
         } else {
             inputPath = args[i];
@@ -92,102 +100,65 @@ GameController::GameController(std::vector<std::string> &args)
         }
     }
     if (error != "") {
-        m_consoleView.PrintError(error);
-        m_consoleView.Delay(500);
+        view->PrintError(error);
+        view->Delay(500);
     }
 }
 
-void GameController::RunAppInConsole() {
-    while (true) {
-        m_consoleView.Clear();
-        m_consoleView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
-        m_consoleView.PrintMap(m_gameModel.GetMap());
-        std::pair<std::string, std::string> command = m_consoleView.GetInput();
+void GameController::RunApp(TypeView type) {
+    std::unique_ptr<IView> view;
+    if (type == Console) {
+        view = std::make_unique<ConsoleView>();
+    } else if (type == Gui) {
+        view = std::make_unique<ImGuiView>();
+    }
+
+    while (!view->ShouldClose()) {
+        view->Update();
+        view->PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
+        view->PrintMap(m_gameModel.GetMap());
+        std::pair<std::string, std::string> command = view->GetInput();
         if (command.first == "dump") {
             m_fileModel.SaveToFile(m_gameModel.GetName(),
                                    m_gameModel.GetRules(),
                                    m_gameModel.GetMap());
+            view->PrintCompletedMessage("Save complete!");
         } else if (command.first == "tick" || command.first == "t") {
-            int ticks = 1;
+            int ticks = 0;
             try {
                 ticks = std::stoi(command.second);
 
             } catch (const std::exception &e) {
-                m_consoleView.PrintError(
+                view->PrintError(
                     "Warning: it is only positive integer");
             }
-            for (int i = 0; i < ticks; i++) {
+
+            for (int i = 0; ticks < 0 ? !view->ShouldClose() && view->IterationsCorrect(ticks) : i < ticks && !view->ShouldClose(); i++) {
                 m_gameModel.Update();
 
-                m_consoleView.Clear();
-                m_consoleView.PrintInfo(m_gameModel.GetName(),
-                                        m_gameModel.GetRules());
-                m_consoleView.PrintMap(m_gameModel.GetMap());
-                m_consoleView.Delay(1000);
+                view->Update();
+                view->PrintInfo(m_gameModel.GetName(),
+                                m_gameModel.GetRules());
+                view->PrintMap(m_gameModel.GetMap());
+                if (view->PrintStop()) {
+                    break;
+                }
+                view->Render();
             }
         } else if (command.first == "exit") {
             break;
         } else if (command.first == "help") {
-            m_consoleView.Clear();
-            m_consoleView.PrintHelp();
-            m_consoleView.PrintReturnCommand();
-        } else {
-            m_consoleView.Clear();
-            m_consoleView.PrintErrorCommand(command.first);
-            m_consoleView.PrintHelp();
-            m_consoleView.PrintReturnCommand();
+            view->Update();
+            view->PrintHelp();
+            view->PrintReturnCommand();
+        } else if (command.first != "\0") {
+            view->Update();
+            view->PrintErrorCommand(command.first);
+            view->PrintHelp();
+            view->PrintReturnCommand();
         }
-    }
-}
 
-void GameController::RunAppInImGui() {
-    m_imGuiView.Start();
-    while (!m_imGuiView.ShouldClose()) {
-        m_imGuiView.Update();
-        m_imGuiView.PrintInfo(m_gameModel.GetName(), m_gameModel.GetRules());
-        m_imGuiView.PrintMap(m_gameModel.GetMap());
-        std::pair<bool, int> commands =
-            m_imGuiView.PrintGetInputBar();
-        if (commands.first == true) {
-            m_fileModel.SaveToFile(m_gameModel.GetName(),
-                                   m_gameModel.GetRules(),
-                                   m_gameModel.GetMap());
-            m_imGuiView.Render();
-            m_imGuiView.PrintCompletedMessage("Save complete!");
-        } else if (commands.second != -1 && commands.second != 0) {
-            m_imGuiView.Render();
-            for (size_t j = 0; j < commands.second &&
-                               !m_imGuiView.ShouldClose();
-                 j++) {
-                m_gameModel.Update();
-
-                m_imGuiView.Update();
-                m_imGuiView.PrintInfo(m_gameModel.GetName(),
-                                      m_gameModel.GetRules());
-                m_imGuiView.PrintMap(m_gameModel.GetMap());
-                if (m_imGuiView.PrintGetInputClose()) {
-                    break;
-                }
-                m_imGuiView.Render();
-                m_imGuiView.Delay(100);
-            }
-        } else if (commands.second == -1) {
-            m_imGuiView.Render();
-            while (!m_imGuiView.ShouldClose()) {
-                m_gameModel.Update();
-
-                m_imGuiView.Update();
-                m_imGuiView.PrintInfo(m_gameModel.GetName(),
-                                      m_gameModel.GetRules());
-                m_imGuiView.PrintMap(m_gameModel.GetMap());
-                if (m_imGuiView.PrintGetInputClose()) {
-                    break;
-                }
-                m_imGuiView.Render();
-                m_imGuiView.Delay(100);
-            }
-        }
-        m_imGuiView.Render();
+        view->Render();
     }
 }
 
@@ -197,5 +168,4 @@ void GameController::RunOfflineApp() {
     }
     m_fileModel.SaveToFile(m_gameModel.GetName(), m_gameModel.GetRules(),
                            m_gameModel.GetMap());
-    m_consoleView.PrintCompletedMessage("Game save");
 }

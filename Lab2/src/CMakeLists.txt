@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 Project(Game)
 
 add_subdirectory(vendor)
+add_subdirectory(config)
 add_subdirectory(view)
 add_subdirectory(model)
 add_subdirectory(controller)
@@ -13,6 +14,8 @@ add_subdirectory(controller)
 add_executable(${PROJECT_NAME} "main.cpp")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE controller)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC config)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libstdc++ -static-libgcc")

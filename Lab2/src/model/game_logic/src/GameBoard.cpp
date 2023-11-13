@@ -1,9 +1,12 @@
 #include "../includes/GameBoard.hpp"
 
+namespace {
+    int mod(int a, int b) { return (a % b + b) % b; }
+} // namespace
+
 GameBoard::GameBoard() : m_width{3}, m_height{5} {
     m_field =
         std::vector<StateCell>(m_width * m_height);
-    m_newField = m_field;
 }
 
 GameBoard::GameBoard(std::vector<Point> aliveCells, int width,
@@ -14,7 +17,6 @@ GameBoard::GameBoard(std::vector<Point> aliveCells, int width,
     for (const auto &cell : aliveCells) {
         m_field[cell.x * m_width + cell.y] = Alive;
     }
-    m_newField = m_field;
 }
 
 GameBoard::~GameBoard() {}
@@ -27,15 +29,11 @@ int GameBoard::GetWidth() {
 }
 
 bool GameBoard::GetState(int x, int y) {
-    return m_field[x * m_width + y];
+    return m_field[mod(x, m_width) * m_width + mod(y, m_height)];
 }
 
 void GameBoard::SetState(int x, int y) {
-    m_newField[x * m_width + y] = (m_newField[x * m_width + y] == Dead ? Alive : Dead);
-}
-
-void GameBoard::SwapField() {
-    m_field = m_newField;
+    m_field[mod(x, m_width) * m_width + mod(y, m_height)] = (m_field[mod(x, m_width) * m_width + mod(y, m_height)] == Dead ? Alive : Dead);
 }
 
 std::vector<std::vector<bool>> GameBoard::GetField() {
