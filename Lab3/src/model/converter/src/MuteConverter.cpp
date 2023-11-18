@@ -12,13 +12,13 @@ namespace Converter {
 
         return samples;
     }
-    void MuteConverter::putParametrs(std::pair<int, int> param) {
+    void MuteConverter::PutParametrs(std::pair<int, int> param) {
         m_start = param.first;
         m_stop = param.second;
     }
-    std::string MuteConverter::getName() { return "Mute converter"; }
-    std::string MuteConverter::getParametrs() { return "start second, stop second"; }
-    std::string MuteConverter::getFeatures() { return "Mute in interval"; }
-    std::string MuteConverter::getSyntax() { return "mute <int> <int>"; }
+    std::string MuteConverter::GetName() { return "Mute converter"; }
+    std::string MuteConverter::GetParametrs() { return "start second, stop second"; }
+    std::string MuteConverter::GetFeatures() { return "Mute in interval"; }
+    std::string MuteConverter::GetSyntax() { return "mute <int> <int>"; }
 
 } // namespace Converter

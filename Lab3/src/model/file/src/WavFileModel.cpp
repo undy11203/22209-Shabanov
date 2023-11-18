@@ -86,20 +86,20 @@ void WavFileModel::OpenForWrite() {
     m_wavFile->write(reinterpret_cast<const char *>(&subchunk2Size), sizeof(subchunk2Size));
 }
 
-std::vector<short> WavFileModel::getCurrentSamples() {
+std::vector<short> WavFileModel::GetCurrentSamples() {
     return m_currentSamples;
 }
 
-unsigned int WavFileModel::getSampleRate() {
+unsigned int WavFileModel::GetSampleRate() {
     unsigned int res = 44100;
     return res;
 }
 
-unsigned int WavFileModel::getDataSize() {
+unsigned int WavFileModel::GetDataSize() {
     return m_dataSize;
 }
 
-bool WavFileModel::isEnd() {
+bool WavFileModel::IsEnd() {
     if (m_wavFile->peek() == EOF) {
         return true;
     }
@@ -125,7 +125,7 @@ std::vector<short> WavFileModel::ReadSecond() {
     return samples;
 }
 
-void WavFileModel::closeWriteFile() {
+void WavFileModel::CloseWriteFile() {
     m_wavFile->seekg(0, std::ios::end);
     m_dataSize = m_wavFile->tellg();
 

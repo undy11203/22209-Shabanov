@@ -79,7 +79,7 @@ std::string ConfigFileModel::NextCommand() {
     return "\0";
 }
 
-bool ConfigFileModel::getPairIndexInt(std::pair<int, int> &param) {
+bool ConfigFileModel::GetPairIndexInt(std::pair<int, int> &param) {
     std::stringstream words(m_currentLine);
     std::string arg;
 
@@ -111,7 +111,7 @@ bool ConfigFileModel::getPairIndexInt(std::pair<int, int> &param) {
     return true;
 }
 
-bool ConfigFileModel::getPairIntInt(std::pair<int, int> &param) {
+bool ConfigFileModel::GetPairIntInt(std::pair<int, int> &param) {
     std::stringstream words(m_currentLine);
     std::string arg;
     ReadInStringStream(words, arg);
@@ -143,7 +143,7 @@ bool ConfigFileModel::getPairIntInt(std::pair<int, int> &param) {
     return true;
 }
 
-bool ConfigFileModel::getTripletIntIntFloat(std::pair<std::pair<int, int>, float> &param) {
+bool ConfigFileModel::GetTripletIntIntFloat(std::pair<std::pair<int, int>, float> &param) {
     std::stringstream words(m_currentLine);
 
     std::string arg;

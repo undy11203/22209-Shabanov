@@ -13,10 +13,10 @@ namespace Converter {
 
     public:
         std::vector<short> UpdateSound(std::vector<short> samples, unsigned int second) override;
-        void putParametrs(WavFileModel &wavFile, int start);
-        std::string getName();
-        std::string getParametrs();
-        std::string getFeatures();
-        std::string getSyntax();
+        void PutParametrs(WavFileModel &wavFile, int start);
+        std::string GetName();
+        std::string GetParametrs();
+        std::string GetFeatures();
+        std::string GetSyntax();
     };
 } // namespace Converter

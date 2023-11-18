@@ -65,34 +65,34 @@ bool SoundController::InitConfConvertors() {
             auto converterPtr = factory->create(Converter::muteTag);
 
             std ::pair<int, int> param;
-            if (!m_configFileModel.getPairIntInt(param)) {
+            if (!m_configFileModel.GetPairIntInt(param)) {
                 isCorrectComplete = false;
                 break;
             }
 
-            converterPtr->putParametrs(param);
+            converterPtr->PutParametrs(param);
             m_vectConverters.push_back(converterPtr);
         } else if (command == "mix") {
             auto converterPtr = factory->create(Converter::mixTag);
 
             std::pair<int, int> param;
-            if (!m_configFileModel.getPairIndexInt(param)) {
+            if (!m_configFileModel.GetPairIndexInt(param)) {
                 isCorrectComplete = false;
                 break;
             }
 
-            converterPtr->putParametrs(m_vectInWavFileModel[param.first - 1], param.second);
+            converterPtr->PutParametrs(m_vectInWavFileModel[param.first - 1], param.second);
             m_vectConverters.push_back(converterPtr);
         } else if (command == "change_speed") {
             auto converterPtr = factory->create(Converter::changeSpeedTag);
 
             std::pair<std::pair<int, int>, float> param;
-            if (!m_configFileModel.getTripletIntIntFloat(param)) {
+            if (!m_configFileModel.GetTripletIntIntFloat(param)) {
                 isCorrectComplete = false;
                 break;
             }
 
-            converterPtr->putParametrs(param);
+            converterPtr->PutParametrs(param);
             m_vectConverters.push_back(converterPtr);
         } else {
             throw UncorrectConfig("Undefined command " + command);
@@ -117,7 +117,7 @@ void SoundController::Convert() {
 
     std::vector<short> samples;
     unsigned int second = 0;
-    while (!m_vectInWavFileModel[0].isEnd()) {
+    while (!m_vectInWavFileModel[0].IsEnd()) {
         second++;
 
         samples = m_vectInWavFileModel[0].ReadSecond();
@@ -132,7 +132,7 @@ void SoundController::Convert() {
         m_outWavFileModel.WriteSamples(samples);
     }
 
-    m_outWavFileModel.closeWriteFile();
+    m_outWavFileModel.CloseWriteFile();
 }
 
 void SoundController::InitForHelpListConvertors() {
@@ -153,10 +153,10 @@ void SoundController::PrintHelpList() {
     std::cout << "HelpList" << std::endl;
     for (const auto &converterPtr : m_vectConverters) {
         std::cout << "=========================" << std::endl;
-        std::cout << "Converter: " << converterPtr->getName() << std::endl;
-        std::cout << "Params: " << converterPtr->getParametrs() << std::endl;
-        std::cout << "Features: " << converterPtr->getFeatures() << std::endl;
-        std::cout << "Syntax in config: " << converterPtr->getSyntax() << std::endl;
+        std::cout << "Converter: " << converterPtr->GetName() << std::endl;
+        std::cout << "Params: " << converterPtr->GetParametrs() << std::endl;
+        std::cout << "Features: " << converterPtr->GetFeatures() << std::endl;
+        std::cout << "Syntax in config: " << converterPtr->GetSyntax() << std::endl;
         std::cout << "=========================" << std::endl;
         std::cout << std::endl;
         std::cout << std::endl;

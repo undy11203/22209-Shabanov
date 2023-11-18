@@ -6,20 +6,20 @@ namespace Converter {
             return samples;
         }
 
-        std::vector<short> additionalSamples = m_additionalFile->getCurrentSamples();
+        std::vector<short> additionalSamples = m_additionalFile->GetCurrentSamples();
         for (size_t i = 0; i < samples.size(); i++) {
             samples[i] = (samples[i] + additionalSamples[i]) / 2;
         }
 
         return samples;
     }
-    void MixConverter::putParametrs(WavFileModel &wavFile, int start) {
+    void MixConverter::PutParametrs(WavFileModel &wavFile, int start) {
         m_additionalFile.reset(&wavFile, [](WavFileModel const *) {});
         m_startSec = start;
     }
-    std::string MixConverter::getName() { return "Mix converter"; }
-    std::string MixConverter::getParametrs() { return "additional file, start second"; }
-    std::string MixConverter::getFeatures() { return "mix with additional sound with start second"; }
-    std::string MixConverter::getSyntax() { return "mix $<int> <int>"; }
+    std::string MixConverter::GetName() { return "Mix converter"; }
+    std::string MixConverter::GetParametrs() { return "additional file, start second"; }
+    std::string MixConverter::GetFeatures() { return "mix with additional sound with start second"; }
+    std::string MixConverter::GetSyntax() { return "mix $<int> <int>"; }
 
 } // namespace Converter
