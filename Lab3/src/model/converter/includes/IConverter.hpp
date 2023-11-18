@@ -9,7 +9,7 @@ namespace Converter {
     struct IConverter {
     public:
         virtual ~IConverter() = default;
-        virtual std::vector<unsigned short> UpdateSound(std::vector<unsigned short> samples, unsigned int second) = 0;
+        virtual std::vector<short> UpdateSound(std::vector<short> samples, unsigned int second) = 0;
         virtual void putParametrs(std::pair<int, int> param) {}
         virtual void putParametrs(WavFileModel &wavFile, int start) {}
         virtual void putParametrs(std::pair<std::pair<int, int>, float> params) {}

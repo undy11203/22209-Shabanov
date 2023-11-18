@@ -12,7 +12,7 @@ namespace Converter {
         int m_startSec;
 
     public:
-        std::vector<unsigned short> UpdateSound(std::vector<unsigned short> samples, unsigned int second) override;
+        std::vector<short> UpdateSound(std::vector<short> samples, unsigned int second) override;
         void putParametrs(WavFileModel &wavFile, int start);
         std::string getName();
         std::string getParametrs();

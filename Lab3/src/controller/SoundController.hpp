@@ -15,10 +15,11 @@ private:
     WavFileModel m_outWavFileModel;
     std::vector<WavFileModel> m_vectInWavFileModel;
 
-    void InitConfConvertors();
+    bool InitConfConvertors();
     void InitForHelpListConvertors();
 
 public:
+    SoundController() = default;
     SoundController(std::vector<std::string> args);
     ~SoundController();
     void Convert();

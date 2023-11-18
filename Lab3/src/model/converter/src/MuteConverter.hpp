@@ -9,7 +9,7 @@ namespace Converter {
         int m_stop;
 
     public:
-        std::vector<unsigned short> UpdateSound(std::vector<unsigned short> samples, unsigned int second) override;
+        std::vector<short> UpdateSound(std::vector<short> samples, unsigned int second) override;
         void putParametrs(std::pair<int, int> param);
         std::string getName();
         std::string getParametrs();

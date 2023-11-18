@@ -1,11 +1,13 @@
 #include "ChangeSpeedConverter.hpp"
 
+#include <math.h>
+
 namespace Converter {
-    std::vector<unsigned short> ChangeSpeedConverter::UpdateSound(std::vector<unsigned short> samples, unsigned int second) {
+    std::vector<short> ChangeSpeedConverter::UpdateSound(std::vector<short> samples, unsigned int second) {
         if (second < m_start || second > m_stop) {
             return samples;
         }
-        std::vector<unsigned short> newSamples;
+        std::vector<short> newSamples;
         for (float i = 0; i < 44100.0f; i += m_speedModifier) {
             newSamples.push_back(samples[static_cast<int>(floor(i))]);
         }

@@ -1,12 +1,12 @@
 #include "MixConverter.hpp"
 
 namespace Converter {
-    std::vector<unsigned short> MixConverter::UpdateSound(std::vector<unsigned short> samples, unsigned int second) {
+    std::vector<short> MixConverter::UpdateSound(std::vector<short> samples, unsigned int second) {
         if (second < m_startSec) {
             return samples;
         }
 
-        std::vector<unsigned short> additionalSamples = m_additionalFile->getCurrentSamples();
+        std::vector<short> additionalSamples = m_additionalFile->getCurrentSamples();
         for (size_t i = 0; i < samples.size(); i++) {
             samples[i] = (samples[i] + additionalSamples[i]) / 2;
         }
@@ -20,6 +20,6 @@ namespace Converter {
     std::string MixConverter::getName() { return "Mix converter"; }
     std::string MixConverter::getParametrs() { return "additional file, start second"; }
     std::string MixConverter::getFeatures() { return "mix with additional sound with start second"; }
-    std::string MixConverter::getSyntax() { return "mix <$int> <int>"; }
+    std::string MixConverter::getSyntax() { return "mix $<int> <int>"; }
 
 } // namespace Converter

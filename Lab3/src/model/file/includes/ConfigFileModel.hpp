@@ -18,6 +18,7 @@ public:
     void OpenConfig();
     void CloseConfig();
     std::string NextCommand();
-    std::pair<int, int> getPairParametrs();
-    std::pair<std::pair<int, int>, float> getTripletParametrs();
+    bool getPairIndexInt(std::pair<int, int> &param);
+    bool getPairIntInt(std::pair<int, int> &param);
+    bool getTripletIntIntFloat(std::pair<std::pair<int, int>, float> &param);
 };

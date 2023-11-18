@@ -12,21 +12,32 @@
 #include <converter/includes/IConverter.hpp>
 #include <converter/includes/Tags.hpp>
 
+#include <FormatExceptions.hpp>
+#include <UncorrectConfig.hpp>
+
 SoundController::SoundController(std::vector<std::string> args) {
+
     bool isFirst = true;
 
     std::string configPath;
     std::string outputPath;
     std::vector<std::string> inputPath;
 
-    for (size_t i = 1; i < args.size(); i++) {
+    if (args.size() >= 3 && args[2].find(".txt") == std::string::npos) {
+        throw FormatExceptions("Need other format for config file, not" + args[3]);
+    } else if (args.size() >= 3) {
+        configPath = args[2];
+    }
+
+    for (size_t i = 3; i < args.size(); i++) {
         if (args[i].find(".wav") != std::string::npos && isFirst) {
             outputPath = args[i];
             isFirst = false;
         } else if (args[i].find(".wav") != std::string::npos && !isFirst) {
             inputPath.push_back(args[i]);
-        } else if (args[i].find(".txt") != std::string::npos) {
-            configPath = args[i];
+        } else {
+            throw FormatExceptions("WAV file ends in .wav format, not " + args[i]);
+            break;
         }
     }
 
@@ -41,7 +52,8 @@ SoundController::SoundController(std::vector<std::string> args) {
 SoundController::~SoundController() {
 }
 
-void SoundController::InitConfConvertors() {
+bool SoundController::InitConfConvertors() {
+    bool isCorrectComplete = true;
     Factory::FactoryMap factoryMap = Converter::factoryItems();
     Factory::IFactoryPtr factory = Factory::createFactory(std::move(factoryMap));
 
@@ -51,22 +63,46 @@ void SoundController::InitConfConvertors() {
     while ((command = m_configFileModel.NextCommand()) != "\0") {
         if (command == "mute") {
             auto converterPtr = factory->create(Converter::muteTag);
-            converterPtr->putParametrs(m_configFileModel.getPairParametrs());
+
+            std ::pair<int, int> param;
+            if (!m_configFileModel.getPairIntInt(param)) {
+                isCorrectComplete = false;
+                break;
+            }
+
+            converterPtr->putParametrs(param);
             m_vectConverters.push_back(converterPtr);
         } else if (command == "mix") {
-            std::pair<int, int> param = m_configFileModel.getPairParametrs();
-
             auto converterPtr = factory->create(Converter::mixTag);
+
+            std::pair<int, int> param;
+            if (!m_configFileModel.getPairIndexInt(param)) {
+                isCorrectComplete = false;
+                break;
+            }
+
             converterPtr->putParametrs(m_vectInWavFileModel[param.first - 1], param.second);
             m_vectConverters.push_back(converterPtr);
         } else if (command == "change_speed") {
             auto converterPtr = factory->create(Converter::changeSpeedTag);
-            converterPtr->putParametrs(m_configFileModel.getTripletParametrs());
+
+            std::pair<std::pair<int, int>, float> param;
+            if (!m_configFileModel.getTripletIntIntFloat(param)) {
+                isCorrectComplete = false;
+                break;
+            }
+
+            converterPtr->putParametrs(param);
             m_vectConverters.push_back(converterPtr);
+        } else {
+            throw UncorrectConfig("Undefined command " + command);
+            m_configFileModel.CloseConfig();
+            return false;
         }
     }
 
     m_configFileModel.CloseConfig();
+    return true;
 }
 
 void SoundController::Convert() {
@@ -76,9 +112,10 @@ void SoundController::Convert() {
 
     m_outWavFileModel.OpenForWrite();
 
-    InitConfConvertors();
+    if (!InitConfConvertors())
+        return;
 
-    std::vector<unsigned short> samples;
+    std::vector<short> samples;
     unsigned int second = 0;
     while (!m_vectInWavFileModel[0].isEnd()) {
         second++;

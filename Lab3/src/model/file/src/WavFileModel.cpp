@@ -3,7 +3,7 @@
 #include "../includes/WavFileModel.hpp"
 
 namespace {
-    void reverseShort(unsigned short &value) {
+    void reverseShort(short &value) {
         value = (value >> 8) | (value << 8);
     }
     void reverseInt(unsigned int &value) {
@@ -18,26 +18,6 @@ WavFileModel::WavFileModel(std::string filePath) : m_filePath{filePath} {}
 
 WavFileModel::~WavFileModel() {
 }
-
-// WavFileModel::WavFileModel(WavFileModel &&other) : m_filePath(std::move(other.m_filePath)),
-//                                                    m_wavFile(std::move(other.m_wavFile)) {}
-
-// WavFileModel &WavFileModel::operator=(WavFileModel &&other) {
-//     if (this != &other) {
-//         m_filePath = std::move(other.m_filePath);
-//         m_wavFile = std::move(other.m_wavFile);
-//     }
-//     return *this;
-// }
-
-// WavFileModel WavFileModel::operator=(const WavFileModel &other) {
-//     m_currentSample = other.m_currentSample;
-//     m_dataSize = other.m_dataSize;
-//     m_filePath = other.m_filePath;
-//     m_wavFile = other.m_wavFile;
-
-//     return *this;
-// }
 
 void WavFileModel::OpenForRead() {
     m_wavFile = std::make_shared<std::fstream>(m_filePath, std::ios::binary | std::ios::in);
@@ -75,12 +55,12 @@ void WavFileModel::OpenForWrite() {
     unsigned int format = 0x57415645;      // WAVE
     unsigned int subchunk1Id = 0x666d7420; // fmt
     unsigned int subchunk1Size = 16;       // PCM
-    unsigned short audioFormat = 1;        // PCM
-    unsigned short numChannels = 1;        // mono
+    short audioFormat = 1;                 // PCM
+    short numChannels = 1;                 // mono
     unsigned int sampleRate = 44100;       // 44100
     unsigned int byteRate = 44100 * 2;     // sample = 2 byte
-    unsigned short blockAlign = 2;
-    unsigned short bitsPerSample = 16;
+    short blockAlign = 2;
+    short bitsPerSample = 16;
     unsigned int subchunk2Id = 0x64617461; // data
     unsigned int subchunk2Size = 0;
 
@@ -106,7 +86,7 @@ void WavFileModel::OpenForWrite() {
     m_wavFile->write(reinterpret_cast<const char *>(&subchunk2Size), sizeof(subchunk2Size));
 }
 
-std::vector<unsigned short> WavFileModel::getCurrentSamples() {
+std::vector<short> WavFileModel::getCurrentSamples() {
     return m_currentSamples;
 }
 
@@ -126,19 +106,17 @@ bool WavFileModel::isEnd() {
     return false;
 }
 
-void WavFileModel::WriteSamples(std::vector<unsigned short> samples) {
+void WavFileModel::WriteSamples(std::vector<short> samples) {
     for (auto sample : samples) {
-        reverseShort(sample);
         m_wavFile->write(reinterpret_cast<const char *>(&sample), sizeof(sample));
     }
 }
 
-std::vector<unsigned short> WavFileModel::ReadSecond() {
-    std::vector<unsigned short> samples;
-    unsigned short sample;
+std::vector<short> WavFileModel::ReadSecond() {
+    std::vector<short> samples;
+    short sample;
     for (size_t i = 0; i < 44100; i++) {
         m_wavFile->read(reinterpret_cast<char *>(&sample), sizeof(sample));
-        reverseShort(sample);
         samples.push_back(sample);
     }
 

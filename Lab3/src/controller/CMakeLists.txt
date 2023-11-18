@@ -5,4 +5,4 @@ add_library(controller STATIC ${SOURCE_FILES})
 
 target_include_directories(controller PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(controller PUBLIC model)
+target_link_libraries(controller PUBLIC model exceptions)

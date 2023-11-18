@@ -2,6 +2,48 @@
 
 #include "../includes/ConfigFileModel.hpp"
 
+#include <UncorrectConfig.hpp>
+
+namespace {
+    bool ReadInStringStream(std::stringstream &words, std::string &arg) {
+        if (!words.eof()) {
+            words >> arg;
+            return true;
+        }
+        return false;
+    }
+
+    bool IsInt(const std::string &str) {
+        for (char c : str) {
+            if (!std::isdigit(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool IsIndex(const std::string &str) {
+        if (str.empty() || str[0] != '$') {
+            return false;
+        }
+        for (size_t i = 1; i < str.size(); ++i) {
+            if (!std::isdigit(str[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool IsFloat(const std::string &str) {
+        for (char c : str) {
+            if (!std::isdigit(c) && c != '.') {
+                return false;
+            }
+        }
+        return true;
+    }
+} // namespace
+
 ConfigFileModel::ConfigFileModel() {}
 
 ConfigFileModel::ConfigFileModel(std::string configPath) : m_configPath{configPath} {
@@ -37,37 +79,114 @@ std::string ConfigFileModel::NextCommand() {
     return "\0";
 }
 
-std::pair<int, int> ConfigFileModel::getPairParametrs() {
-    std::pair<int, int> pairParametrs;
+bool ConfigFileModel::getPairIndexInt(std::pair<int, int> &param) {
     std::stringstream words(m_currentLine);
     std::string arg;
-    words >> arg;
-    words >> arg;
 
-    if (arg[0] != '$') {
-        pairParametrs.first = std::stoi(arg);
-    } else {
-        pairParametrs.first = std::stoi(arg.substr(1));
+    ReadInStringStream(words, arg);
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
     }
-    words >> arg;
-    pairParametrs.second = std::stoi(arg);
 
-    return pairParametrs;
+    if (IsIndex(arg)) {
+        param.first = std::stoi(arg.substr(1));
+    } else {
+        throw UncorrectConfig("No index on first arguments");
+        return false;
+    }
+
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
+    }
+
+    if (IsInt(arg)) {
+        param.second = std::stoi(arg);
+    } else {
+        throw UncorrectConfig("No int on second arguments");
+        return false;
+    }
+
+    return true;
 }
 
-std::pair<std::pair<int, int>, float> ConfigFileModel::getTripletParametrs() {
-    std::pair<std::pair<int, int>, float> tripletParametrs;
+bool ConfigFileModel::getPairIntInt(std::pair<int, int> &param) {
     std::stringstream words(m_currentLine);
     std::string arg;
-    words >> arg;
-    words >> arg;
-    tripletParametrs.first.first = std::stoi(arg);
+    ReadInStringStream(words, arg);
 
-    words >> arg;
-    tripletParametrs.first.second = std::stoi(arg);
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
+    }
 
-    words >> arg;
-    tripletParametrs.second = std::stof(arg);
+    if (IsInt(arg)) {
+        param.first = std::stoi(arg);
+    } else {
+        throw UncorrectConfig("No int on first arguments");
+        return false;
+    }
 
-    return tripletParametrs;
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
+    }
+
+    if (IsInt(arg)) {
+        param.second = std::stoi(arg);
+    } else {
+        throw UncorrectConfig("No int on second arguments");
+        return false;
+    }
+
+    return true;
+}
+
+bool ConfigFileModel::getTripletIntIntFloat(std::pair<std::pair<int, int>, float> &param) {
+    std::stringstream words(m_currentLine);
+
+    std::string arg;
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("No arguments in command");
+        return false;
+    }
+
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in triplet");
+        return false;
+    }
+
+    if (IsInt(arg)) {
+        param.first.first = std::stoi(arg);
+    } else {
+        throw UncorrectConfig("No int on first arguments");
+        return false;
+    }
+
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
+    }
+
+    if (IsInt(arg)) {
+        param.first.second = std::stoi(arg);
+    } else {
+        throw UncorrectConfig("No int on second arguments");
+        return false;
+    }
+
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
+    }
+
+    if (IsFloat(arg)) {
+        param.second = std::stof(arg);
+    } else {
+        throw UncorrectConfig("No float on third arguments");
+        return false;
+    }
+
+    return true;
 }
