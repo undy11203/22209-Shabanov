@@ -1,3 +1,24 @@
+[submodule "Lab2/googletest"]
+	path = Lab2/googletest
+	url = https://github.com/google/googletest.git
+[submodule "Lab2/tests/googletest"]
+	path = Lab2/tests/googletest
+	url = https://github.com/google/googletest.git
+[submodule "Lab2/src/imgui"]
+	path = Lab2/src/imgui
+	url = https://github.com/ocornut/imgui.git
+[submodule "Lab2/src/glfw"]
+	path = Lab2/src/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "Lab2/src/glad"]
+	path = Lab2/src/glad
+	url = https://github.com/Dav1dde/glad.git
+[submodule "Lab2/src/vendor/glfw"]
+	path = Lab2/src/vendor/glfw
+	url = https://github.com/glfw/glfw.git
+[submodule "Lab2/src/vendor/imgui"]
+	path = Lab2/src/vendor/imgui
+	url = https://github.com/ocornut/imgui.git
 [submodule "Lab1/googletest"]
 	path = Lab1/googletest
 	url = https://github.com/google/googletest.git
