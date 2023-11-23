@@ -61,10 +61,6 @@ private:
     std::tuple<Args...> m_tuple;
     char m_delimCol = ',';
     char m_delimRow = '\n';
-    char m_end;
-
-public:
-    CSVParser(std::ifstream &fileDesc, int count);
 
     class Iterator {
     private:
@@ -84,6 +80,13 @@ public:
         Iterator &operator++(int);
         Iterator &operator++();
     };
+
+public:
+    Iterator iterator;
+
+    CSVParser(std::ifstream &fileDesc, int count);
+    CSVParser(std::ifstream &fileDesc, int count, char delimCol);
+    CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow);
 
     void NextRow();
 
@@ -128,14 +131,27 @@ public:
 };
 
 template <typename... Args>
-typename CSVParser<Args...>::Iterator CSVParser<Args...>::begin() {
-    NextRow();
-    return Iterator(this);
+CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count) : iterator(this) {
+    m_fileDesc = std::move(fileDesc);
+    for (size_t i = 0; i < count; i++) {
+        NextRow();
+    }
 }
 
 template <typename... Args>
-typename CSVParser<Args...>::Iterator CSVParser<Args...>::end() {
-    return Iterator(this);
+CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol) : m_delimCol(delimCol), iterator(this) {
+    m_fileDesc = std::move(fileDesc);
+    for (size_t i = 0; i < count; i++) {
+        NextRow();
+    }
+}
+
+template <typename... Args>
+CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow) : m_delimCol(delimCol), m_delimRow(delimRow), iterator(this) {
+    m_fileDesc = std::move(fileDesc);
+    for (size_t i = 0; i < count; i++) {
+        NextRow();
+    }
 }
 
 template <typename... Args>
@@ -144,11 +160,14 @@ void CSVParser<Args...>::NextRow() {
 }
 
 template <typename... Args>
-CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count) {
-    m_fileDesc = std::move(fileDesc);
-    for (size_t i = 0; i < count; i++) {
-        NextRow();
-    }
+typename CSVParser<Args...>::Iterator CSVParser<Args...>::begin() {
+    NextRow();
+    return Iterator(this);
+}
+
+template <typename... Args>
+typename CSVParser<Args...>::Iterator CSVParser<Args...>::end() {
+    return Iterator(this);
 }
 
 template <typename... Args>
