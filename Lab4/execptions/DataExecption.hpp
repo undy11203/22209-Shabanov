@@ -1,20 +1,20 @@
 #pragma once
 
-#include "BaseExecption.hpp"
-
 #include <string>
 
-class DataExecption : public BaseExecption {
+class DataExecption : public std::exception {
+protected:
+    std::string m_error;
+
 public:
-    DataExecption(int col, int row);
-    ~DataExecption();
-    std::string what() override;
+    explicit DataExecption(int col, int row);
+    char const *what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW override;
 };
 
 DataExecption::DataExecption(int col, int row) {
-    m_error = "Error in col" + std::to_string(col) + "in row" + std::to_string(row);
+    m_error = "Line: " + std::to_string(row) + " Col: " + std::to_string(col) + " - uncorrect format data";
 }
 
-std::string DataExecption::what() {
-    return m_error;
+char const *DataExecption::what() const _GLIBCXX_TXN_SAFE_DYN _GLIBCXX_NOTHROW {
+    return m_error.data();
 }

@@ -2,10 +2,11 @@ cmake_minimum_required(VERSION 3.20)
 
 project(Templete)
 
+set (CMAKE_CXX_STANDARD 20)
 
 SET(SOURCE_FILES main.cpp
                  CSVParser.tpp
-                 execptions/BaseExecption.hpp
+                 TupleOutput.tpp
                  execptions/DataExecption.hpp
                  )
 
