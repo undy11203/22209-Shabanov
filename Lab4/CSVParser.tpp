@@ -1,6 +1,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "exceptions/DataExecption.hpp"
+
 namespace {
     enum Shield {
         DelimColShield,
@@ -16,9 +18,13 @@ namespace {
         return true;
     }
     bool IsFloat(const std::string &str) {
+        int countPoint = 0;
         for (const char &c : str) {
-            if (!std::isdigit(c) && c != '.') {
+            if (!std::isdigit(c) && c != '.' || countPoint > 1) {
                 return false;
+            }
+            if (countPoint == 0) {
+                countPoint++;
             }
         }
         return true;
@@ -34,7 +40,7 @@ namespace {
         return false;
     }
     bool IsString(const std::string &str) {
-        if (!IsInt(str) && !IsFloat(str) && !IsChar(str)) {
+        if (!IsInt(str) && !IsChar(str) && !IsFloat(str)) {
             return true;
         }
         return false;
@@ -98,6 +104,7 @@ public:
 
 template <typename... Args>
 CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count) : m_file(std::move(fileDesc)) {
+
     for (size_t i = 0; i < count; i++) {
         GetRow();
     }
@@ -109,7 +116,7 @@ CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol)
     for (size_t i = 0; i < count; i++) {
         GetRow();
     }
-    GetRow();
+    m_fileStart = m_file.tellg();
 }
 
 template <typename... Args>
@@ -117,15 +124,15 @@ CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol,
     for (size_t i = 0; i < count; i++) {
         GetRow();
     }
-    GetRow();
+    m_fileStart = m_file.tellg();
 }
 
 template <typename... Args>
-CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow, char delimShield) : m_file(std::move(fileDesc)), m_delimCol{delimCol}, m_delimRow{delimRow} {
+CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow, char delimEscape) : m_file(std::move(fileDesc)), m_delimCol{delimCol}, m_delimRow{delimRow}, m_delimEscape{delimEscape} {
     for (size_t i = 0; i < count; i++) {
         GetRow();
     }
-    GetRow();
+    m_fileStart = m_file.tellg();
 }
 
 template <typename... Args>
@@ -150,9 +157,10 @@ void CSVParser<Args...>::GetRow() {
 
     char c;
     while (m_file.get(c)) {
+
         if (c == m_delimEscape) {
             if (isEscaped) {
-                m_row.append(1, m_delimRow);
+                m_row.append(1, c);
                 isEscaped = false;
             } else {
                 m_row.append(1, c);
@@ -177,7 +185,7 @@ void CSVParser<Args...>::GetCell(std::istringstream &iss, std::string &str, cons
     while (iss.get(c)) {
         if (c == m_delimEscape) {
             if (isEscaped) {
-                str.append(1, m_delimCol);
+                str.append(1, c);
                 isEscaped = false;
             } else {
                 isEscaped = true;
@@ -189,6 +197,7 @@ void CSVParser<Args...>::GetCell(std::istringstream &iss, std::string &str, cons
             isEscaped = false;
         }
     }
+
     EscapeBeginSpace(str);
 }
 
@@ -209,7 +218,7 @@ std::tuple<Args...> CSVParser<Args...>::Iterator::operator*() const {
 }
 
 template <typename... Args>
-CSVParser<Args...>::Iterator &CSVParser<Args...>::Iterator::operator++() {
+typename CSVParser<Args...>::Iterator &CSVParser<Args...>::Iterator::operator++() {
     value.GetRow();
     return *this;
 }
