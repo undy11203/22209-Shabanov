@@ -56,9 +56,6 @@ ConfigFileModel &ConfigFileModel::operator=(const ConfigFileModel &other) {
     return *this;
 }
 
-ConfigFileModel::~ConfigFileModel() {
-}
-
 void ConfigFileModel::OpenConfig() {
     m_config.open(m_configPath);
 }

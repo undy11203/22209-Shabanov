@@ -1,4 +1,4 @@
 #include "FormatExceptions.hpp"
 
 FormatExceptions::FormatExceptions(std::string text) { error = text; };
-std::string FormatExceptions::what() { return error; }
+const char *FormatExceptions::what() const noexcept { return error.data(); }

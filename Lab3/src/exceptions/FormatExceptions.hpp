@@ -1,9 +1,12 @@
 #pragma once
 
-#include <BaseExceptions.hpp>
+#include <string>
 
-class FormatExceptions final : public BaseExceptions {
+class FormatExceptions final : public std::exception {
+private:
+    std::string error;
+
 public:
     FormatExceptions(std::string text);
-    std::string what() override;
+    const char *what() const noexcept override;
 };

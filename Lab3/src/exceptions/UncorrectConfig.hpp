@@ -1,9 +1,12 @@
 #pragma once
 
-#include "BaseExceptions.hpp"
+#include <string>
 
-class UncorrectConfig final : public BaseExceptions {
+class UncorrectConfig final : public std::exception {
+private:
+    std::string error;
+
 public:
     UncorrectConfig(std::string text);
-    std::string what() override;
+    const char *what() const noexcept override;
 };

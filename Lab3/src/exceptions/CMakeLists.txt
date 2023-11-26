@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
-SET(SOURCE_FILES BaseExceptions.hpp 
-                 ConsoleArgExceptions.hpp 
+SET(SOURCE_FILES 
                  FormatExceptions.hpp 
                  UncorrectConfig.hpp
-                 ConsoleArgExceptions.cpp 
                  FormatExceptions.cpp
                  UncorrectConfig.cpp
                  )

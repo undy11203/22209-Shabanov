@@ -14,7 +14,6 @@ public:
     ConfigFileModel();
     ConfigFileModel(std::string configPath);
     ConfigFileModel &operator=(const ConfigFileModel &other);
-    ~ConfigFileModel();
     void OpenConfig();
     void CloseConfig();
     std::string NextCommand();

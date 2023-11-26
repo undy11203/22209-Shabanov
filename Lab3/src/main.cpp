@@ -2,31 +2,30 @@
 #include <string>
 #include <vector>
 
-#include <ConsoleArgExceptions.hpp>
 #include <FormatExceptions.hpp>
 #include <SoundController.hpp>
 #include <UncorrectConfig.hpp>
 
-enum ConfigProgramm {
+namespace Error {
+    const int ERROR_ARGUMENTS = -1;
+    const int ERROR_FORMAT = -1;
+    const int ERROR_IN_CONFIG = -1;
+} // namespace
+
+enum class ConfigProgramm {
     HelpMod,
     ConvertMod,
     Undefiend
 };
 
-enum ErrorCode {
-    ERROR_ARGUMENTS = -1,
-    ERROR_FORMAT = -2,
-    ERROR_IN_CONFIG = -3
-};
-
 void Config(std::vector<std::string> args, ConfigProgramm &configProgramm) {
     for (size_t i = 1; i < args.size(); i++) {
         if (args[i] == "-h") {
-            configProgramm = HelpMod;
+            configProgramm = ConfigProgramm::HelpMod;
             break;
         }
         if (args[i] == "-c") {
-            configProgramm = ConvertMod;
+            configProgramm = ConfigProgramm::ConvertMod;
         }
     }
 }
@@ -34,17 +33,12 @@ void Config(std::vector<std::string> args, ConfigProgramm &configProgramm) {
 int main(int argc, char *argv[]) {
     std::vector<std::string> args(argv, argv + argc);
 
-    try {
-        if (args.size() < 5 && args[1] != "-h") {
-            throw ConsoleArgExceptions("Not enough arguments or undefine flags. Now counts arguments: " + std::to_string(args.size()));
-        }
-
-    } catch (ConsoleArgExceptions &e) {
-        std::cerr << e.what() << '\n';
-        return ErrorCode::ERROR_ARGUMENTS;
+    if (args.size() < 5 && args[1] != "-h") {
+        std::cerr << "Not enough arguments or undefine flags. Now counts arguments: " + std::to_string(args.size()) << '\n';
+        return Error::ERROR_ARGUMENTS;
     }
 
-    ConfigProgramm configProgramm = Undefiend;
+    ConfigProgramm configProgramm = ConfigProgramm::Undefiend;
 
     Config(args, configProgramm);
     SoundController soundController;
@@ -53,18 +47,18 @@ int main(int argc, char *argv[]) {
         soundController = SoundController(args);
     } catch (FormatExceptions &e) {
         std::cerr << e.what() << '\n';
-        return ErrorCode::ERROR_FORMAT;
+        return Error::ERROR_FORMAT;
     }
 
-    if (configProgramm == ConvertMod) {
+    if (configProgramm == ConfigProgramm::ConvertMod) {
         try {
             soundController.Convert();
         } catch (UncorrectConfig &e) {
             std::cerr << e.what() << '\n';
-            return ErrorCode::ERROR_IN_CONFIG;
+            return Error::ERROR_IN_CONFIG;
         }
 
-    } else if (configProgramm == HelpMod) {
+    } else if (configProgramm == ConfigProgramm::HelpMod) {
         soundController.PrintHelpList();
     }
 

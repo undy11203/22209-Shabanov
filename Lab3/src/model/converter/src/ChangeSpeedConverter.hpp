@@ -12,10 +12,10 @@ namespace Converter {
     public:
         std::vector<short>
         UpdateSound(std::vector<short> samples, unsigned int second) override;
-        void PutParametrs(std::pair<std::pair<int, int>, float> params);
-        std::string GetName();
-        std::string GetParametrs();
-        std::string GetFeatures();
-        std::string GetSyntax();
+        void PutParametrs(std::pair<std::pair<int, int>, float> params) override;
+        std::string GetName() override;
+        std::string GetParametrs() override;
+        std::string GetFeatures() override;
+        std::string GetSyntax() override;
     };
 } // namespace Converter
