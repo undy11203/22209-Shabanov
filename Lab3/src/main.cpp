@@ -8,8 +8,8 @@
 
 namespace Error {
     const int ERROR_ARGUMENTS = -1;
-    const int ERROR_FORMAT = -1;
-    const int ERROR_IN_CONFIG = -1;
+    const int ERROR_FORMAT = -2;
+    const int ERROR_IN_CONFIG = -3;
 } // namespace
 
 enum class ConfigProgramm {
