@@ -1,5 +1,7 @@
 #include "ChangeSpeedConverter.hpp"
 
+#include "../includes/Parametrs.hpp"
+
 #include <math.h>
 
 namespace Converter {
@@ -13,10 +15,10 @@ namespace Converter {
         }
         return newSamples;
     }
-    void ChangeSpeedConverter::PutParametrs(std::pair<std::pair<int, int>, float> params) {
-        m_start = params.first.first;
-        m_stop = params.first.second;
-        m_speedModifier = params.second;
+    void ChangeSpeedConverter::PutParameters(std::vector<Params> params) {
+        m_start = std::get<Duration>(params[0]).start;
+        m_stop = std::get<Duration>(params[0]).start;
+        m_speedModifier = std::get<Modifier>(params[1]).coefficient;
     }
     std::string ChangeSpeedConverter::GetName() { return "changeSpeed converter"; }
     std::string ChangeSpeedConverter::GetParametrs() { return "start, stop, speed modifier"; }

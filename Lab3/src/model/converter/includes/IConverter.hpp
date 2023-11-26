@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Parametrs.hpp"
 #include <file/includes/WavFileModel.hpp>
 
 #include <string>
@@ -10,9 +11,7 @@ namespace Converter {
     public:
         virtual ~IConverter() = default;
         virtual std::vector<short> UpdateSound(std::vector<short> samples, unsigned int second) = 0;
-        virtual void PutParametrs(std::pair<int, int> param) {}
-        virtual void PutParametrs(WavFileModel &wavFile, int start) {}
-        virtual void PutParametrs(std::pair<std::pair<int, int>, float> params) {}
+        virtual void PutParameters(std::vector<Params> params) = 0;
         virtual std::string GetName() = 0;
         virtual std::string GetParametrs() = 0;
         virtual std::string GetFeatures() = 0;

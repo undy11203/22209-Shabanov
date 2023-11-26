@@ -10,7 +10,7 @@ namespace Converter {
 
     public:
         std::vector<short> UpdateSound(std::vector<short> samples, unsigned int second) override;
-        void PutParametrs(std::pair<int, int> param) override;
+        void PutParameters(std::vector<Params> params) override;
         std::string GetName() override;
         std::string GetParametrs() override;
         std::string GetFeatures() override;

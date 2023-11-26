@@ -10,6 +10,7 @@
 #include <converter/includes/FactoryItems.hpp>
 #include <converter/includes/Fwd.hpp>
 #include <converter/includes/IConverter.hpp>
+#include <converter/includes/Parametrs.hpp>
 #include <converter/includes/Tags.hpp>
 
 #include <FormatExceptions.hpp>
@@ -59,41 +60,57 @@ bool SoundController::InitConfConvertors() {
 
     m_configFileModel.OpenConfig();
 
+    std::vector<Params> params;
+
     std::string command;
     while ((command = m_configFileModel.NextCommand()) != "\0") {
         if (command == "mute") {
             auto converterPtr = factory->create(Converter::muteTag);
 
-            std ::pair<int, int> param;
-            if (!m_configFileModel.GetPairIntInt(param)) {
+            std ::pair<int, int> commandArguments;
+            if (!m_configFileModel.GetPairIntInt(commandArguments)) {
                 isCorrectComplete = false;
                 break;
             }
 
-            converterPtr->PutParametrs(param);
+            params.push_back(Duration{.start = commandArguments.first, .stop = commandArguments.second});
+
+            converterPtr->PutParameters(params);
             m_vectConverters.push_back(converterPtr);
+
+            params.clear();
         } else if (command == "mix") {
             auto converterPtr = factory->create(Converter::mixTag);
 
-            std::pair<int, int> param;
-            if (!m_configFileModel.GetPairIndexInt(param)) {
+            std::pair<int, int> commandArguments;
+            if (!m_configFileModel.GetPairIndexInt(commandArguments)) {
                 isCorrectComplete = false;
                 break;
             }
 
-            converterPtr->PutParametrs(m_vectInWavFileModel[param.first - 1], param.second);
+            params.push_back(AdditionalFile{.wavFile = m_vectInWavFileModel[commandArguments.first - 1]});
+            params.push_back(TimePoint{.sec = commandArguments.second});
+
+            converterPtr->PutParameters(params);
             m_vectConverters.push_back(converterPtr);
+
+            params.clear();
         } else if (command == "change_speed") {
             auto converterPtr = factory->create(Converter::changeSpeedTag);
 
-            std::pair<std::pair<int, int>, float> param;
-            if (!m_configFileModel.GetTripletIntIntFloat(param)) {
+            std::pair<std::pair<int, int>, float> commandArguments;
+            if (!m_configFileModel.GetTripletIntIntFloat(commandArguments)) {
                 isCorrectComplete = false;
                 break;
             }
 
-            converterPtr->PutParametrs(param);
+            params.push_back(Duration{.start = commandArguments.first.first, .stop = commandArguments.first.second});
+            params.push_back(Modifier{.coefficient = commandArguments.second});
+
+            converterPtr->PutParameters(params);
             m_vectConverters.push_back(converterPtr);
+
+            params.clear();
         } else {
             throw UncorrectConfig("Undefined command " + command);
             m_configFileModel.CloseConfig();

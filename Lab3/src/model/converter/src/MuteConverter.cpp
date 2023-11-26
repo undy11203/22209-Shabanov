@@ -1,5 +1,7 @@
 #include "MuteConverter.hpp"
 
+#include "../includes/Parametrs.hpp"
+
 namespace Converter {
     std::vector<short> MuteConverter::UpdateSound(std::vector<short> samples, unsigned int second) {
         if (second < m_start || second > m_stop) {
@@ -12,9 +14,9 @@ namespace Converter {
 
         return samples;
     }
-    void MuteConverter::PutParametrs(std::pair<int, int> param) {
-        m_start = param.first;
-        m_stop = param.second;
+    void MuteConverter::PutParameters(std::vector<Params> params) {
+        m_start = std::get<Duration>(params[0]).start;
+        m_stop = std::get<Duration>(params[0]).stop;
     }
     std::string MuteConverter::GetName() { return "Mute converter"; }
     std::string MuteConverter::GetParametrs() { return "start second, stop second"; }

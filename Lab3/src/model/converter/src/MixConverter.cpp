@@ -1,5 +1,7 @@
 #include "MixConverter.hpp"
 
+#include "../includes/Parametrs.hpp"
+
 namespace Converter {
     std::vector<short> MixConverter::UpdateSound(std::vector<short> samples, unsigned int second) {
         if (second < m_startSec) {
@@ -13,9 +15,9 @@ namespace Converter {
 
         return samples;
     }
-    void MixConverter::PutParametrs(WavFileModel &wavFile, int start) {
-        m_additionalFile.reset(&wavFile, [](WavFileModel const *) {});
-        m_startSec = start;
+    void MixConverter::PutParameters(std::vector<Params> params) {
+        m_additionalFile.reset(&std::get<AdditionalFile>(params[0]).wavFile, [](WavFileModel const *) {});
+        m_startSec = std::get<TimePoint>(params[1]).sec;
     }
     std::string MixConverter::GetName() { return "Mix converter"; }
     std::string MixConverter::GetParametrs() { return "additional file, start second"; }
