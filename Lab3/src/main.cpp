@@ -39,7 +39,6 @@ int main(int argc, char *argv[]) {
     }
 
     ConfigProgramm configProgramm = ConfigProgramm::Undefiend;
-
     Config(args, configProgramm);
     SoundController soundController;
 

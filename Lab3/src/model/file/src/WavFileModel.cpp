@@ -1,5 +1,7 @@
 #include <deque>
 
+#include <iostream>
+
 #include "../includes/WavFileModel.hpp"
 
 namespace {
@@ -113,6 +115,10 @@ void WavFileModel::WriteSamples(std::vector<short> samples) {
 }
 
 std::vector<short> WavFileModel::ReadSecond() {
+    if (m_wavFile->peek() == EOF) {
+        m_wavFile->seekg(44);
+    }
+
     std::vector<short> samples;
     short sample;
     for (size_t i = 0; i < 44100; i++) {
@@ -139,7 +145,7 @@ void WavFileModel::CloseWriteFile() {
     m_wavFile->write(reinterpret_cast<const char *>(&chunkSize), sizeof(chunkSize));
 
     m_wavFile->seekp(40, std::ios::beg);
-    m_wavFile->write(reinterpret_cast<const char *>(&chunkSize), sizeof(chunkSize));
+    m_wavFile->write(reinterpret_cast<const char *>(&subchunk2Size), sizeof(subchunk2Size));
 
     m_wavFile->close();
 }

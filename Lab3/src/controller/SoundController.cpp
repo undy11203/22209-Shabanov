@@ -134,6 +134,7 @@ void SoundController::Convert() {
 
     std::vector<short> samples;
     unsigned int second = 0;
+
     while (!m_vectInWavFileModel[0].IsEnd()) {
         second++;
 

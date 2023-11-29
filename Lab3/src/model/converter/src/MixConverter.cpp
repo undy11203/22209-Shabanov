@@ -9,7 +9,7 @@ namespace Converter {
         }
 
         std::vector<short> additionalSamples = m_additionalFile->GetCurrentSamples();
-        for (size_t i = 0; i < samples.size(); i++) {
+        for (size_t i = 0; i < std::min(samples.size(), additionalSamples.size()); i++) {
             samples[i] = (samples[i] + additionalSamples[i]) / 2;
         }
 
