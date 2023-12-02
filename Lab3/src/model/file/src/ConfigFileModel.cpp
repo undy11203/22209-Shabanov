@@ -46,8 +46,6 @@ namespace {
     }
 } // namespace
 
-ConfigFileModel::ConfigFileModel() {}
-
 ConfigFileModel::ConfigFileModel(std::string configPath) : m_configPath{configPath} {
 }
 

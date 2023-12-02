@@ -14,12 +14,7 @@ namespace {
 
 } // namespace
 
-WavFileModel::WavFileModel() {}
-
 WavFileModel::WavFileModel(std::string filePath) : m_filePath{filePath} {}
-
-WavFileModel::~WavFileModel() {
-}
 
 void WavFileModel::OpenForRead() {
     m_wavFile = std::make_shared<std::fstream>(m_filePath, std::ios::binary | std::ios::in);
@@ -89,19 +84,6 @@ void WavFileModel::OpenForWrite() {
     m_wavFile->write(reinterpret_cast<const char *>(&subchunk2Size), sizeof(subchunk2Size));
 }
 
-std::vector<short> WavFileModel::GetCurrentSamples() {
-    return m_currentSamples;
-}
-
-unsigned int WavFileModel::GetSampleRate() {
-    unsigned int res = 44100;
-    return res;
-}
-
-unsigned int WavFileModel::GetDataSize() {
-    return m_dataSize;
-}
-
 bool WavFileModel::IsEnd() {
     if (m_wavFile->peek() == EOF) {
         return true;
@@ -126,8 +108,6 @@ std::vector<short> WavFileModel::GetSamplesInSecond(int second) {
         samples.push_back(sample);
     }
 
-    m_currentSamples = samples;
-
     m_wavFile->seekg(pos);
 
     return samples;
@@ -140,8 +120,6 @@ std::vector<short> WavFileModel::ReadSecond() {
         m_wavFile->read(reinterpret_cast<char *>(&sample), sizeof(sample));
         samples.push_back(sample);
     }
-
-    m_currentSamples = samples;
 
     return samples;
 }

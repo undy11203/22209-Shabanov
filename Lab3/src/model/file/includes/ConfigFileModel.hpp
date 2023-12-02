@@ -14,13 +14,12 @@ private:
     std::string m_currentLine;
 
 public:
-    ConfigFileModel();
+    ConfigFileModel() = default;
     ConfigFileModel(std::string configPath);
     ConfigFileModel &operator=(const ConfigFileModel &other);
     void OpenConfig();
     void CloseConfig();
     std::string NextCommand();
-    bool GetParam(std::string command, std::vector<Params> &params, std::vector<WavFileModel> &m_vectInWavFileModel);
     bool GetDuration(std::vector<Params> &param);
     bool GetTimePointAndAdditional(std::vector<Params> &param, std::vector<WavFileModel> &wavFiles);
     bool GetDurationAndModifier(std::vector<Params> &param);
