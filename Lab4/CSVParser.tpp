@@ -8,6 +8,16 @@ namespace {
         DelimColShield,
         DelimRowShield
     };
+
+    void EscapeBeginSpace(std::string &str) {
+        for (int i = 0; i < str.size(); i++) {
+            if (str[i] != ' ') {
+                str = str.substr(i);
+                break;
+            }
+        }
+    }
+
 } // namespace
 
 template <typename... Args>
