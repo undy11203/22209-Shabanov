@@ -6,7 +6,7 @@ set (CMAKE_CXX_STANDARD 20)
 
 SET(SOURCE_FILES main.cpp
                  CSVParser.tpp
-                 TupleOutput.tpp
+                 TupleOutput.hpp
                  exceptions/DataExecption.hpp
                  )
 

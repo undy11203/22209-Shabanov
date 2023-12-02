@@ -93,42 +93,14 @@ private:
     void StrRowToTupleRow(std::index_sequence<Is...>);
 
 public:
-    CSVParser(std::ifstream &fileDesc, int count);
-    CSVParser(std::ifstream &fileDesc, int count, char delimCol);
-    CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow);
-    CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow, char delimShield);
+    CSVParser(std::ifstream &fileDesc, int count, char delimCol = ',', char delimRow = '\n', char delimEscape = '\"');
 
     Iterator begin();
     Iterator end();
 };
 
 template <typename... Args>
-CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count) : m_file(std::move(fileDesc)) {
-
-    for (size_t i = 0; i < count; i++) {
-        GetRow();
-    }
-    m_fileStart = m_file.tellg();
-}
-
-template <typename... Args>
-CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol) : m_file(std::move(fileDesc)), m_delimCol{delimCol} {
-    for (size_t i = 0; i < count; i++) {
-        GetRow();
-    }
-    m_fileStart = m_file.tellg();
-}
-
-template <typename... Args>
-CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow) : m_file(std::move(fileDesc)), m_delimCol{delimCol}, m_delimRow{delimRow} {
-    for (size_t i = 0; i < count; i++) {
-        GetRow();
-    }
-    m_fileStart = m_file.tellg();
-}
-
-template <typename... Args>
-CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow, char delimEscape) : m_file(std::move(fileDesc)), m_delimCol{delimCol}, m_delimRow{delimRow}, m_delimEscape{delimEscape} {
+CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow, char delimEscape) : m_delimCol{delimCol}, m_delimRow{delimRow}, m_delimEscape{delimEscape}, m_file(std::move(fileDesc)) {
     for (size_t i = 0; i < count; i++) {
         GetRow();
     }
@@ -205,10 +177,10 @@ template <typename... Args>
 bool CSVParser<Args...>::Iterator::operator!=(Iterator const &other) {
     if (value.m_file.eof() && isEndPoint == false) {
         isEndPoint = true;
-        return isEndPoint;
+        return !isEndPoint != other.isEndPoint;
     }
 
-    return !(isEndPoint);
+    return isEndPoint != other.isEndPoint;
 }
 
 template <typename... Args>
@@ -230,33 +202,20 @@ T CSVParser<Args...>::StrToTypeT(std::istringstream &iss) {
     GetCell(iss, stringValue, m_delimCol);
     m_numberCurrentCol++;
 
-    if constexpr (std::is_same<T, int>::value) {
-        if (IsInt(stringValue)) {
-            return std::stoi(stringValue);
-        } else {
+    std::stringstream ss(stringValue);
+
+    T res;
+    try {
+        ss >> res;
+        if (ss.fail()) {
             throw DataExecption(m_numberCurrentCol, m_numberCurrentRow);
+            return T();
         }
-    } else if constexpr (std::is_same<T, float>::value || std::is_same<T, double>::value) {
-        if (IsFloat(stringValue)) {
-            return std::stof(stringValue);
-        } else {
-            throw DataExecption(m_numberCurrentCol, m_numberCurrentRow);
-        }
-    } else if constexpr (std::is_same<T, char>::value) {
-        if (IsChar(stringValue)) {
-            return stringValue[0];
-        } else {
-            throw DataExecption(m_numberCurrentCol, m_numberCurrentRow);
-        }
-    } else if constexpr (std::is_same<T, std::string>::value) {
-        if (IsString(stringValue)) {
-            return stringValue;
-        } else {
-            throw DataExecption(m_numberCurrentCol, m_numberCurrentRow);
-        }
+    } catch (DataExecption &e) {
+        throw e;
     }
 
-    return 0;
+    return res;
 }
 
 template <typename... Args>
