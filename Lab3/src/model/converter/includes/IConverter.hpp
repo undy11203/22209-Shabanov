@@ -10,7 +10,7 @@ namespace Converter {
     struct IConverter {
     public:
         virtual ~IConverter() = default;
-        virtual std::vector<short> UpdateSound(std::vector<short> samples, unsigned int second) = 0;
+        virtual std::vector<short> UpdateSound(std::vector<short> &samples, unsigned int second) = 0;
         virtual void PutParameters(std::vector<Params> params) = 0;
         virtual std::string GetName() = 0;
         virtual std::string GetParametrs() = 0;

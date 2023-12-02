@@ -2,10 +2,13 @@
 
 #include <iostream>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include <Factory/FactoryCreator.hpp>
+#include <Factory/Fwd.hpp>
 #include <Factory/IFactory.hpp>
+#include <Factory/Tag.hpp>
 
 #include <converter/includes/FactoryItems.hpp>
 #include <converter/includes/Fwd.hpp>
@@ -15,6 +18,12 @@
 
 #include <FormatExceptions.hpp>
 #include <UncorrectConfig.hpp>
+
+namespace {
+    std::unordered_map<std::string, const Factory::Tag<Converter::IConverterPtr>> convertor = {{"mute", Converter::muteTag},
+                                                                                               {"mix", Converter::mixTag},
+                                                                                               {"change_speed", Converter::changeSpeedTag}};
+} // namespace
 
 SoundController::SoundController(std::vector<std::string> args) {
 
@@ -50,9 +59,6 @@ SoundController::SoundController(std::vector<std::string> args) {
     }
 }
 
-SoundController::~SoundController() {
-}
-
 bool SoundController::InitConfConvertors() {
     bool isCorrectComplete = true;
     Factory::FactoryMap factoryMap = Converter::factoryItems();
@@ -61,61 +67,28 @@ bool SoundController::InitConfConvertors() {
     m_configFileModel.OpenConfig();
 
     std::vector<Params> params;
+    std::unordered_map<std::string,
+                       std::function<bool()>>
+        parseParams = {{"mix", [this, &params] { return m_configFileModel.GetTimePointAndAdditional(params, m_vectInWavFileModel); }},
+                       {"mute", [this, &params] { return m_configFileModel.GetDuration(params); }},
+                       {"change_speed", [this, &params] { return m_configFileModel.GetDurationAndModifier(params); }}};
 
     std::string command;
     while ((command = m_configFileModel.NextCommand()) != "\0") {
-        if (command == "mute") {
-            auto converterPtr = factory->create(Converter::muteTag);
-
-            std ::pair<int, int> commandArguments;
-            if (!m_configFileModel.GetPairIntInt(commandArguments)) {
-                isCorrectComplete = false;
-                break;
-            }
-
-            params.push_back(Duration{.start = commandArguments.first, .stop = commandArguments.second});
-
-            converterPtr->PutParameters(params);
-            m_vectConverters.push_back(converterPtr);
-
-            params.clear();
-        } else if (command == "mix") {
-            auto converterPtr = factory->create(Converter::mixTag);
-
-            std::pair<int, int> commandArguments;
-            if (!m_configFileModel.GetPairIndexInt(commandArguments)) {
-                isCorrectComplete = false;
-                break;
-            }
-
-            params.push_back(AdditionalFile{.wavFile = m_vectInWavFileModel[commandArguments.first - 1]});
-            params.push_back(TimePoint{.sec = commandArguments.second});
-
-            converterPtr->PutParameters(params);
-            m_vectConverters.push_back(converterPtr);
-
-            params.clear();
-        } else if (command == "change_speed") {
-            auto converterPtr = factory->create(Converter::changeSpeedTag);
-
-            std::pair<std::pair<int, int>, float> commandArguments;
-            if (!m_configFileModel.GetTripletIntIntFloat(commandArguments)) {
-                isCorrectComplete = false;
-                break;
-            }
-
-            params.push_back(Duration{.start = commandArguments.first.first, .stop = commandArguments.first.second});
-            params.push_back(Modifier{.coefficient = commandArguments.second});
-
-            converterPtr->PutParameters(params);
-            m_vectConverters.push_back(converterPtr);
-
-            params.clear();
-        } else {
+        if (parseParams.find(command) == parseParams.end()) {
             throw UncorrectConfig("Undefined command " + command);
             m_configFileModel.CloseConfig();
             return false;
         }
+        auto converterPtr = factory->create(convertor.at(command));
+        if (!parseParams.at(command)()) {
+            isCorrectComplete = false;
+            break;
+        }
+
+        converterPtr->PutParameters(params);
+        m_vectConverters.push_back(converterPtr);
+        params.clear();
     }
 
     m_configFileModel.CloseConfig();
@@ -139,9 +112,6 @@ void SoundController::Convert() {
         second++;
 
         samples = m_vectInWavFileModel[0].ReadSecond();
-        for (size_t i = 1; i < m_vectInWavFileModel.size(); i++) {
-            m_vectInWavFileModel[i].ReadSecond();
-        }
 
         for (const auto &converterPtr : m_vectConverters) {
             samples = converterPtr->UpdateSound(samples, second);

@@ -5,7 +5,7 @@
 #include <math.h>
 
 namespace Converter {
-    std::vector<short> ChangeSpeedConverter::UpdateSound(std::vector<short> samples, unsigned int second) {
+    std::vector<short> ChangeSpeedConverter::UpdateSound(std::vector<short> &samples, unsigned int second) {
         if (second < m_start || second > m_stop) {
             return samples;
         }

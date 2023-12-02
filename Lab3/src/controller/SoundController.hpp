@@ -21,7 +21,7 @@ private:
 public:
     SoundController() = default;
     SoundController(std::vector<std::string> args);
-    ~SoundController();
+    void FillConvertor(std::string command);
     void Convert();
     void PrintHelpList();
 };

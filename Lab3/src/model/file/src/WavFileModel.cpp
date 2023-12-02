@@ -47,6 +47,7 @@ void WavFileModel::OpenForRead() {
         }
     }
 
+    m_start = m_wavFile->tellg();
     m_wavFile->read(reinterpret_cast<char *>(&m_dataSize), sizeof(m_dataSize));
     reverseInt(m_dataSize);
 }
@@ -114,11 +115,25 @@ void WavFileModel::WriteSamples(std::vector<short> samples) {
     }
 }
 
-std::vector<short> WavFileModel::ReadSecond() {
-    if (m_wavFile->peek() == EOF) {
-        m_wavFile->seekg(44);
+std::vector<short> WavFileModel::GetSamplesInSecond(int second) {
+    int pos = m_wavFile->tellg();
+    m_wavFile->seekg(m_start + 44100 * (second % ((m_dataSize - m_start) / 44100 / 2)));
+
+    std::vector<short> samples;
+    short sample;
+    for (size_t i = 0; i < 44100; i++) {
+        m_wavFile->read(reinterpret_cast<char *>(&sample), sizeof(sample));
+        samples.push_back(sample);
     }
 
+    m_currentSamples = samples;
+
+    m_wavFile->seekg(pos);
+
+    return samples;
+}
+
+std::vector<short> WavFileModel::ReadSecond() {
     std::vector<short> samples;
     short sample;
     for (size_t i = 0; i < 44100; i++) {

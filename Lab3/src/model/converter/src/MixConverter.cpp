@@ -3,12 +3,12 @@
 #include "../includes/Parametrs.hpp"
 
 namespace Converter {
-    std::vector<short> MixConverter::UpdateSound(std::vector<short> samples, unsigned int second) {
+    std::vector<short> MixConverter::UpdateSound(std::vector<short> &samples, unsigned int second) {
         if (second < m_startSec) {
             return samples;
         }
 
-        std::vector<short> additionalSamples = m_additionalFile->GetCurrentSamples();
+        std::vector<short> additionalSamples = m_additionalFile->GetSamplesInSecond(second);
         for (size_t i = 0; i < std::min(samples.size(), additionalSamples.size()); i++) {
             samples[i] = (samples[i] + additionalSamples[i]) / 2;
         }

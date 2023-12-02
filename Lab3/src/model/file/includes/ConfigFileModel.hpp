@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include <converter/includes/Parametrs.hpp>
+#include <file/includes/WavFileModel.hpp>
+
 class ConfigFileModel {
 private:
     std::string m_configPath;
@@ -17,7 +20,8 @@ public:
     void OpenConfig();
     void CloseConfig();
     std::string NextCommand();
-    bool GetPairIndexInt(std::pair<int, int> &param);
-    bool GetPairIntInt(std::pair<int, int> &param);
-    bool GetTripletIntIntFloat(std::pair<std::pair<int, int>, float> &param);
+    bool GetParam(std::string command, std::vector<Params> &params, std::vector<WavFileModel> &m_vectInWavFileModel);
+    bool GetDuration(std::vector<Params> &param);
+    bool GetTimePointAndAdditional(std::vector<Params> &param, std::vector<WavFileModel> &wavFiles);
+    bool GetDurationAndModifier(std::vector<Params> &param);
 };

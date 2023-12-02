@@ -1,4 +1,6 @@
+#include <functional>
 #include <sstream>
+#include <unordered_map>
 
 #include "../includes/ConfigFileModel.hpp"
 
@@ -76,9 +78,48 @@ std::string ConfigFileModel::NextCommand() {
     return "\0";
 }
 
-bool ConfigFileModel::GetPairIndexInt(std::pair<int, int> &param) {
+bool ConfigFileModel::GetDuration(std::vector<Params> &param) {
     std::stringstream words(m_currentLine);
     std::string arg;
+    ReadInStringStream(words, arg);
+
+    Duration duration;
+
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
+    }
+
+    if (IsInt(arg)) {
+        duration.start = std::stoi(arg);
+    } else {
+        throw UncorrectConfig("No int on first arguments");
+        return false;
+    }
+
+    if (!ReadInStringStream(words, arg)) {
+        throw UncorrectConfig("Not enough arguments in command");
+        return false;
+    }
+
+    if (IsInt(arg)) {
+        duration.stop = std::stoi(arg);
+    } else {
+        throw UncorrectConfig("No int on second arguments");
+        return false;
+    }
+
+    param.push_back(duration);
+
+    return true;
+}
+
+bool ConfigFileModel::GetTimePointAndAdditional(std::vector<Params> &param, std::vector<WavFileModel> &wavFiles) {
+    std::stringstream words(m_currentLine);
+    std::string arg;
+
+    AdditionalFile additionalFile = {.wavFile = wavFiles[0]};
+    TimePoint timePoint;
 
     ReadInStringStream(words, arg);
     if (!ReadInStringStream(words, arg)) {
@@ -87,7 +128,8 @@ bool ConfigFileModel::GetPairIndexInt(std::pair<int, int> &param) {
     }
 
     if (IsIndex(arg)) {
-        param.first = std::stoi(arg.substr(1));
+        int number = std::stoi(arg.substr(1));
+        additionalFile.wavFile = wavFiles[number - 1];
     } else {
         throw UncorrectConfig("No index on first arguments");
         return false;
@@ -99,51 +141,25 @@ bool ConfigFileModel::GetPairIndexInt(std::pair<int, int> &param) {
     }
 
     if (IsInt(arg)) {
-        param.second = std::stoi(arg);
+        timePoint.sec = std::stoi(arg);
     } else {
         throw UncorrectConfig("No int on second arguments");
         return false;
     }
 
-    return true;
-}
-
-bool ConfigFileModel::GetPairIntInt(std::pair<int, int> &param) {
-    std::stringstream words(m_currentLine);
-    std::string arg;
-    ReadInStringStream(words, arg);
-
-    if (!ReadInStringStream(words, arg)) {
-        throw UncorrectConfig("Not enough arguments in command");
-        return false;
-    }
-
-    if (IsInt(arg)) {
-        param.first = std::stoi(arg);
-    } else {
-        throw UncorrectConfig("No int on first arguments");
-        return false;
-    }
-
-    if (!ReadInStringStream(words, arg)) {
-        throw UncorrectConfig("Not enough arguments in command");
-        return false;
-    }
-
-    if (IsInt(arg)) {
-        param.second = std::stoi(arg);
-    } else {
-        throw UncorrectConfig("No int on second arguments");
-        return false;
-    }
+    param.push_back(additionalFile);
+    param.push_back(timePoint);
 
     return true;
 }
-
-bool ConfigFileModel::GetTripletIntIntFloat(std::pair<std::pair<int, int>, float> &param) {
+bool ConfigFileModel::GetDurationAndModifier(std::vector<Params> &param) {
     std::stringstream words(m_currentLine);
 
     std::string arg;
+
+    Duration duration;
+    Modifier modifier;
+
     if (!ReadInStringStream(words, arg)) {
         throw UncorrectConfig("No arguments in command");
         return false;
@@ -155,7 +171,7 @@ bool ConfigFileModel::GetTripletIntIntFloat(std::pair<std::pair<int, int>, float
     }
 
     if (IsInt(arg)) {
-        param.first.first = std::stoi(arg);
+        duration.start = std::stoi(arg);
     } else {
         throw UncorrectConfig("No int on first arguments");
         return false;
@@ -167,7 +183,7 @@ bool ConfigFileModel::GetTripletIntIntFloat(std::pair<std::pair<int, int>, float
     }
 
     if (IsInt(arg)) {
-        param.first.second = std::stoi(arg);
+        duration.stop = std::stoi(arg);
     } else {
         throw UncorrectConfig("No int on second arguments");
         return false;
@@ -179,11 +195,14 @@ bool ConfigFileModel::GetTripletIntIntFloat(std::pair<std::pair<int, int>, float
     }
 
     if (IsFloat(arg)) {
-        param.second = std::stof(arg);
+        modifier.coefficient = std::stof(arg);
     } else {
         throw UncorrectConfig("No float on third arguments");
         return false;
     }
+
+    param.push_back(duration);
+    param.push_back(modifier);
 
     return true;
 }

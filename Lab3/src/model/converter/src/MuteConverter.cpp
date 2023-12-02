@@ -3,7 +3,7 @@
 #include "../includes/Parametrs.hpp"
 
 namespace Converter {
-    std::vector<short> MuteConverter::UpdateSound(std::vector<short> samples, unsigned int second) {
+    std::vector<short> MuteConverter::UpdateSound(std::vector<short> &samples, unsigned int second) {
         if (second < m_start || second > m_stop) {
             return samples;
         }
