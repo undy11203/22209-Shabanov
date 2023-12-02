@@ -177,10 +177,10 @@ template <typename... Args>
 bool CSVParser<Args...>::Iterator::operator!=(Iterator const &other) {
     if (value.m_file.eof() && isEndPoint == false) {
         isEndPoint = true;
-        return !isEndPoint != other.isEndPoint;
+        return !isEndPoint != other.isEndPoint && this != &other;
     }
 
-    return isEndPoint != other.isEndPoint;
+    return isEndPoint != other.isEndPoint && this != &other;
 }
 
 template <typename... Args>
