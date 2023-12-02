@@ -8,53 +8,6 @@ namespace {
         DelimColShield,
         DelimRowShield
     };
-
-    bool IsInt(const std::string &str) {
-        for (const char &c : str) {
-            if (!std::isdigit(c)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    bool IsFloat(const std::string &str) {
-        int countPoint = 0;
-        for (const char &c : str) {
-            if (!std::isdigit(c) && c != '.' || countPoint > 1) {
-                return false;
-            }
-            if (countPoint == 0) {
-                countPoint++;
-            }
-        }
-        return true;
-    }
-    bool IsChar(const std::string &str) {
-        int i = 0;
-        for (const char &c : str) {
-            i++;
-        }
-        if (i == 1)
-            return true;
-
-        return false;
-    }
-    bool IsString(const std::string &str) {
-        if (!IsInt(str) && !IsChar(str) && !IsFloat(str)) {
-            return true;
-        }
-        return false;
-    }
-
-    void EscapeBeginSpace(std::string &str) {
-        for (int i = 0; i < str.size(); i++) {
-            if (str[i] != ' ') {
-                str = str.substr(i);
-                break;
-            }
-        }
-    }
-
 } // namespace
 
 template <typename... Args>
