@@ -1,4 +1,5 @@
 #include <fstream>
+#include <memory>
 #include <sstream>
 
 #include "exceptions/DataExecption.hpp"
@@ -26,10 +27,10 @@ private:
     class Iterator {
     private:
         friend class CSVParser<Args...>;
-        Iterator(CSVParser<Args...> &p, bool isEndPoint) : value(p), isEndPoint(isEndPoint) {}
+        Iterator(CSVParser<Args...> &p, int currentPos) : value(p), currentPos(currentPos) {}
 
     public:
-        bool isEndPoint;
+        int currentPos;
         CSVParser &value;
         bool operator!=(Iterator const &other);
         std::tuple<Args...> operator*() const;
@@ -71,16 +72,17 @@ CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol,
 }
 
 template <typename... Args>
-CSVParser<Args...>::Iterator CSVParser<Args...>::begin() {
-    m_file.seekg(m_fileStart);
+typename CSVParser<Args...>::Iterator CSVParser<Args...>::begin() {
+    m_file.seekg(m_fileStart, std::ios_base::beg);
+    Iterator iter = Iterator(*this, m_file.tellg());
     GetRow();
 
-    return Iterator(*this, false);
+    return iter;
 }
 
 template <typename... Args>
-CSVParser<Args...>::Iterator CSVParser<Args...>::end() {
-    return Iterator(*this, true);
+typename CSVParser<Args...>::Iterator CSVParser<Args...>::end() {
+    return Iterator(*this, -1);
 }
 
 template <typename... Args>
@@ -138,12 +140,7 @@ void CSVParser<Args...>::GetCell(std::istringstream &iss, std::string &str, cons
 
 template <typename... Args>
 bool CSVParser<Args...>::Iterator::operator!=(Iterator const &other) {
-    if (value.m_file.eof() && isEndPoint == false) {
-        isEndPoint = true;
-        return isEndPoint;
-    }
-
-    return !isEndPoint;
+    return currentPos != other.currentPos;
 }
 
 template <typename... Args>
@@ -154,7 +151,10 @@ std::tuple<Args...> CSVParser<Args...>::Iterator::operator*() const {
 
 template <typename... Args>
 typename CSVParser<Args...>::Iterator &CSVParser<Args...>::Iterator::operator++() {
-    value.GetRow();
+    currentPos = value.m_file.tellg();
+    if (!value.m_file.eof()) {
+        value.GetRow();
+    }
     return *this;
 }
 
