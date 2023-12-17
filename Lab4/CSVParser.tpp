@@ -38,7 +38,7 @@ private:
         Iterator &operator++();
     };
 
-    std::ifstream *m_file;
+    std::ifstream &&m_file;
     std::tuple<Args...> m_tuple;
     std::string m_row;
     char m_delimCol = ',';
@@ -65,11 +65,11 @@ public:
 };
 
 template <typename... Args>
-CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow, char delimEscape) : m_delimCol{delimCol}, m_delimRow{delimRow}, m_delimEscape{delimEscape}, m_file(&fileDesc) {
+CSVParser<Args...>::CSVParser(std::ifstream &fileDesc, int count, char delimCol, char delimRow, char delimEscape) : m_delimCol{delimCol}, m_delimRow{delimRow}, m_delimEscape{delimEscape}, m_file(std::move(fileDesc)) {
     for (size_t i = 0; i < count; i++) {
         GetRow();
     }
-    m_fileStart = m_file->tellg();
+    m_fileStart = m_file.tellg();
 }
 
 template <typename... Args>
@@ -91,7 +91,7 @@ void CSVParser<Args...>::GetRow() {
     bool isEscaped = false;
 
     char c;
-    while (m_file->get(c)) {
+    while (m_file.get(c)) {
 
         if (c == m_delimEscape) {
             if (isEscaped) {
@@ -149,7 +149,7 @@ std::tuple<Args...> CSVParser<Args...>::Iterator::operator*() const {
 
 template <typename... Args>
 typename CSVParser<Args...>::Iterator &CSVParser<Args...>::Iterator::operator++() {
-    if (!value->m_file->eof()) {
+    if (!value->m_file.eof()) {
         value->GetRow();
         currentRow = value->m_numberCurrentRow;
     } else {
