@@ -58,7 +58,6 @@ private:
     void StrRowToTupleRow(std::index_sequence<Is...>);
 
 public:
-    CSVParser();
     CSVParser(std::ifstream &fileDesc, int count, char delimCol = ',', char delimRow = '\n', char delimEscape = '\"');
 
     Iterator begin();
