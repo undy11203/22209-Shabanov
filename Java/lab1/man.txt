@@ -1,0 +1,18 @@
+define a 4
+define b 10
+define c 20
+push a
+push b
+push c
+push 10
+push 20
++
+-
+/
+*
+sqrt
+print
+push 999
+print
+pop
+print
