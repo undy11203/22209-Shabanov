@@ -25,9 +25,16 @@ public class Main {
                 input = new FileInputStream(args[0]);
                 logger.log(Level.INFO, "Change on file input");
             }
-            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
-            String line;
-            while ((line = reader.readLine()) != null) {
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }
+        BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+        String line;
+        while (true) {
+            try {
+                if((line = reader.readLine()) == null){
+                    break;
+                }
                 logger.log(Level.INFO, "Read line");
                 if (line.contains("#")) {
                     continue;
@@ -39,9 +46,9 @@ public class Main {
                 String[] parametrsArray = parametrsStream.toArray(String[]::new);
                 command.execute(parametrsArray, ctx);
                 logger.log(Level.INFO, "Current command is executed");
+            } catch (Exception e){
+                e.printStackTrace();
             }
-        }catch(IOException e){
-            e.printStackTrace();
         }
     }
 }

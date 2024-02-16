@@ -1,13 +1,22 @@
 package com.shabanov.commands;
 
+import com.shabanov.exceptions.NotEnoughStackValueException;
+import com.shabanov.exceptions.UncorrectValue;
+
 public class Div implements Command {
     @Override
-    public void execute(String[] paramentrs, Context ctx){
+    public void execute(String[] paramentrs, Context ctx) throws NotEnoughStackValueException, UncorrectValue {
         Double first = ctx.getElement();
+        ctx.removeLastElement();
         Double second = ctx.getElement();
         ctx.removeLastElement();
-        ctx.removeLastElement();
+        if(first == null || second == null){
+            throw new NotEnoughStackValueException("Not enough value");
+        }
+        if(second == 0){
+            throw new UncorrectValue("Divide by 0");
+        }
 
-        ctx.putElement(first - second);
+        ctx.putElement(second / first);
     }
 }

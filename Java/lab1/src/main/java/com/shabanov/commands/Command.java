@@ -1,5 +1,5 @@
 package com.shabanov.commands;
 
 public interface Command {
-    public void execute(String[] parametrs, Context ctx);
+    void execute(String[] parametrs, Context ctx) throws Exception;
 }

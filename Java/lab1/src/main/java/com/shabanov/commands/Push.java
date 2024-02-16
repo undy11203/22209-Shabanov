@@ -1,5 +1,7 @@
 package com.shabanov.commands;
 
+import com.shabanov.exceptions.NotExistsConstantException;
+
 public class Push implements Command{
     private boolean isNumeric(String str){
         try{
@@ -11,10 +13,13 @@ public class Push implements Command{
     }
 
     @Override
-    public void execute(String[] paramentrs, Context ctx){
+    public void execute(String[] paramentrs, Context ctx) throws NotExistsConstantException{
         if(isNumeric(paramentrs[0])){
             ctx.putElement(Double.parseDouble(paramentrs[0]));
         }else{
+            if(ctx.getConstant(paramentrs[0]) == null){
+                throw new NotExistsConstantException("Not exists constant with this name");
+            }
             ctx.putElement(ctx.getConstant(paramentrs[0]));
         }
     }

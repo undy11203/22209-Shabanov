@@ -1,25 +1,27 @@
 package com.shabanov.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Context {
     private Logger logger = Logger.getLogger(getClass().getName());
-    private ArrayList<Double> stack;
+    private ArrayDeque<Double> stack;
     private Map<String, Double> constant;
 
     public Context(){
-        this.stack = new ArrayList<Double>();
+        this.stack = new ArrayDeque<Double>();
         this.constant = new HashMap<String, Double>();
     }
 
     public Double getElement(){
-        Double res = stack.get(stack.size()-1);
-        logger.log(Level.INFO, "Get last element " + res);
-        return res;
+        try {
+            Double res = stack.getLast();
+            logger.log(Level.INFO, "Get last element " + res);
+            return res;
+        }catch (NoSuchElementException e){
+            return null;
+        }
     }
 
     public void putElement(Double value){
@@ -28,8 +30,12 @@ public class Context {
     }
 
     public void removeLastElement(){
-        stack.remove(stack.size()-1);
-        logger.log(Level.INFO, "delete last element");
+        try{
+            stack.removeLast();
+            logger.log(Level.INFO, "delete last element");
+        }catch (NoSuchElementException e){
+
+        }
     }
 
     public Double getConstant(String name){

@@ -1,0 +1,6 @@
+push 0
+push 20
+/
+print
+push 20
+print

@@ -37,12 +37,8 @@ public class CommandFactory {
             Class classCommand = Class.forName(className);
             logger.log(Level.INFO, "Get class by its className");
             return (Command) classCommand.newInstance();
-        }catch (ClassNotFoundException e){
-
-        }catch (InstantiationException e){
-
-        }catch (IllegalAccessException e){
-
+        }catch (ClassNotFoundException | InstantiationException | IllegalAccessException e){
+            e.printStackTrace();
         }
         return null;
     }
