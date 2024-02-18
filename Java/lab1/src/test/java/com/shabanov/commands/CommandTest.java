@@ -157,6 +157,8 @@ public class CommandTest {
         ctx.putElement(20.0);
         command.execute(null, ctx);
         Assertions.assertEquals(10.0, ctx.getElement());
+        command.execute(new String[]{"a"}, ctx);
+        Assertions.assertEquals(10.0, ctx.getConstant("a"));
     }
 
     @Test

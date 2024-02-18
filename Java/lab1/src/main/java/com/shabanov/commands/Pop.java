@@ -7,6 +7,11 @@ public class Pop implements Command {
         if(ctx.getElement() == null){
             throw new VoidStackException("Stack is void");
         }
-        ctx.removeLastElement();
+        if(paramentrs == null){
+            ctx.removeLastElement();
+        }else if(paramentrs.length == 1){
+            ctx.putConstant(paramentrs[0], ctx.getElement());
+            ctx.removeLastElement();
+        }
     }
 }
