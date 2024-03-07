@@ -42,21 +42,11 @@ public class CsvParser {
     }
 
     public void writeWordStatistic() {
-        InputStreamReader reader = null;
-        try {
-            reader = new InputStreamReader(new FileInputStream(path));
+        try (InputStreamReader reader = new InputStreamReader(new FileInputStream(path))){
             collectingStatistic(reader);
             writeInFile();
         } catch(IOException e){
             System.out.println("\u001B[31mError while reading: " + e.getMessage() + "\u001B[31m");
-        } finally {
-            if(reader != null){
-                try{
-                    reader.close();
-                }catch (IOException e){
-                    System.out.println(e.getStackTrace());
-                }
-            }
         }
     }
 
@@ -65,14 +55,16 @@ public class CsvParser {
                                                 ? path.lastIndexOf('/') + '/'
                                                 : 0
                                             ) + "output.csv";
-        OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputPath));
-        for (DataWord word : words) {
-            String entry = word.getWord() + ',' +
-                           word.getCount() + ',' +
-                    (double)word.getCount()/allWords*100 + '%' + '\n';
-            writer.write(entry);
+        try(OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(outputPath))){
+            for (DataWord word : words) {
+                String entry = word.getWord() + ',' +
+                        word.getCount() + ',' +
+                        (double)word.getCount()/allWords*100 + '%' + '\n';
+                writer.write(entry);
+            }
+        }catch (IOException e){
+            System.out.println("\u001B[31mError while writing: " + e.getMessage() + "\u001B[31m");
         }
-        writer.close();
     }
 
     private void collectingStatistic(InputStreamReader reader) throws IOException {
