@@ -91,7 +91,7 @@ public class CommandTest {
 
     @Test
     void mulNotEnoughParametr() throws Exception {
-        Command command = commandFactory.createCommand("+");
+        Command command = commandFactory.createCommand("*");
         ctx.putElement(10.0);
         Assertions.assertThrows(NotEnoughStackValueException.class,
                                 () -> command.execute(null, ctx));
@@ -141,6 +141,13 @@ public class CommandTest {
         String[] p = {"10"};
         command.execute(p, ctx);
         Assertions.assertEquals(10.0, ctx.getElement());
+
+        Command commandDefine = commandFactory.createCommand("define");
+        String[] defineA = {"a","20"};
+        String[] a = {"a"};
+        commandDefine.execute(defineA, ctx);
+        command.execute(a, ctx);
+        Assertions.assertEquals(20.0, ctx.getElement());
     }
 
     @Test

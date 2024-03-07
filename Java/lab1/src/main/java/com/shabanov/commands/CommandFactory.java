@@ -12,19 +12,13 @@ import java.util.logging.Logger;
 
 public class CommandFactory {
     private Logger logger = Logger.getLogger(getClass().getName());
-    private Map<String, String> commandMap = new HashMap<String, String>();
+    private Properties commandsProp = new Properties();
 
     public CommandFactory() {
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("commands.properties");
-            Properties prop = new Properties();
-            prop.load(inputStream);
+            commandsProp.load(inputStream);
             logger.log(Level.INFO, "Connect with commands.properties file");
-            for (String commandName: prop.stringPropertyNames()){
-                String className = prop.getProperty(commandName);
-                commandMap.put(commandName, className);
-                logger.log(Level.INFO, "Read command " + commandName);
-            }
         }catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,7 +26,7 @@ public class CommandFactory {
 
     public Command createCommand(String commandName) {
         try {
-            String className = commandMap.get(commandName);
+            String className = commandsProp.getProperty(commandName);
             logger.log(Level.INFO, "Get className command " + className);
             Class classCommand = Class.forName(className);
             logger.log(Level.INFO, "Get class by its className");

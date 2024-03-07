@@ -6,13 +6,8 @@ import java.util.logging.Logger;
 
 public class Context {
     private Logger logger = Logger.getLogger(getClass().getName());
-    private ArrayDeque<Double> stack;
-    private Map<String, Double> constant;
-
-    public Context(){
-        this.stack = new ArrayDeque<Double>();
-        this.constant = new HashMap<String, Double>();
-    }
+    private ArrayDeque<Double> stack = new ArrayDeque<Double>();
+    private Map<String, Double> constant = new HashMap<String, Double>();
 
     public Double getElement(){
         try {
@@ -22,6 +17,13 @@ public class Context {
         }catch (NoSuchElementException e){
             return null;
         }
+    }
+
+    public Double getElementAndRemove(){
+        logger.log(Level.INFO, "Use getElementAndRemove method:\n");
+        Double elem = getElement();
+        removeLastElement();
+        return elem;
     }
 
     public void putElement(Double value){
