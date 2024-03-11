@@ -1,5 +1,6 @@
 package com.shabanov.commands;
 
+import com.shabanov.Interpritator;
 import com.shabanov.exceptions.NotEnoughStackValueException;
 import com.shabanov.exceptions.NotExistsConstantException;
 import com.shabanov.exceptions.UncorrectValue;
@@ -30,13 +31,45 @@ public class CommandTest {
     }
 
     @Test
+    void InteraptorTest() throws IOException {
+        String commands = "+=com.shabanov.commands.Add\n" +
+                "-=com.shabanov.commands.Sub\n" +
+                "*=com.shabanov.commands.Mul\n" +
+                "/=com.shabanov.commands.Div\n" +
+                "sqrt=com.shabanov.commands.Sqrt\n" +
+                "push=com.shabanov.commands.Push\n" +
+                "pop=com.shabanov.commands.Pop\n" +
+                "print=com.shabanov.commands.Print\n" +
+                "define=com.shabanov.commands.Define\n";
+        InputStream inputStream = new ByteArrayInputStream(commands.getBytes());
+        Interpritator interpritator = new Interpritator(
+                new BufferedReader(
+                        new InputStreamReader(
+                                new FileInputStream("text.txt"))));
+        interpritator.start(inputStream);
+        Interpritator interpritator1 = new Interpritator(
+                new BufferedReader(
+                        new InputStreamReader(
+                                new FileInputStream("text.txt"))));
+        interpritator1.start(null);
+
+        interpritator = new Interpritator(
+                new BufferedReader(
+                        new InputStreamReader(
+                                new FileInputStream("text2.txt"))));
+        Interpritator interpritator2 = interpritator;
+        interpritator2.start(inputStream);
+
+    }
+
+    @Test
     void CommandFactoryCorrect() {
         Command command = commandFactory.createCommand("push");
     }
 
     @Test
     void CommandFactoryError() {
-        Assertions.assertThrows(NullPointerException.class, () -> commandFactory.createCommand("fasfsa"));
+        Assertions.assertNull(commandFactory.createCommand("fasfsa"));
     }
 
     @Test
@@ -93,8 +126,8 @@ public class CommandTest {
     @Test
     void divByZero(){
         Command command = commandFactory.createCommand("/");
-        ctx.putElement(0.0);
         ctx.putElement(10.0);
+        ctx.putElement(0.0);
         Assertions.assertThrows(UncorrectValue.class,
                                 () -> command.execute(null, ctx));
     }

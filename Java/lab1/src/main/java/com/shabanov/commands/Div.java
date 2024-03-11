@@ -11,7 +11,7 @@ public class Div implements Command {
         if(first == null || second == null){
             throw new NotEnoughStackValueException("Not enough value");
         }
-        if(second == 0){
+        if(first == 0){
             throw new UncorrectValue("Divide by 0");
         }
 

@@ -1,6 +1,6 @@
 push 0
 push 20
-#fdfs
+fdfs
 /
 print
 push 20

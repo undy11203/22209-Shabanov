@@ -15,38 +15,54 @@ import java.util.stream.Stream;
 public class Interpritator {
     private BufferedReader reader;
     private Logger logger = Logger.getLogger(getClass().getName());
+    private String[] CommandWithParams = null;
+
+    private String getNextCommand() throws IOException {
+        try{
+            String line = reader.readLine();
+            while(line.contains("#")){
+                line = reader.readLine();
+            }
+            CommandWithParams = line.split(" ");
+        }catch (NullPointerException e){
+            return null;
+        }
+
+        return  CommandWithParams[0];
+    }
+
+    private String[] getCommandParams(){
+        Stream<String> parametrsStream = Arrays.stream(CommandWithParams).skip(1);
+        String[] parametrsArray = parametrsStream.toArray(String[]::new);
+        return parametrsArray;
+    }
 
     public Interpritator(BufferedReader reader){
         this.reader = reader;
     }
-    public void start(){
+    public void start(InputStream commands){
         Context ctx = new Context();
         logger.log(Level.INFO, "Created context");
-        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("commands.properties");
         CommandFactory commandFactory = null;
         try{
-            commandFactory = new CommandFactory(inputStream);
-        }catch (IOException e){
+            commandFactory = new CommandFactory(commands);
+        }catch (NullPointerException | IOException e){
             e.printStackTrace();
+            return;
         }
         logger.log(Level.INFO, "Created command factory");
 
-        String line;
         while (true) {
             try {
-                if((line = reader.readLine()) == null){
+                String commandName = getNextCommand();
+                if(commandName == null){
                     break;
                 }
                 logger.log(Level.INFO, "Read line");
-                if (line.contains("#")) {
-                    continue;
-                }
-                String[] formulationCommand = line.split(" ");
-                Command command = commandFactory.createCommand(formulationCommand[0]);
+
+                Command command = commandFactory.createCommand(commandName);
                 logger.log(Level.INFO, "Create current command");
-                Stream<String> parametrsStream = Arrays.stream(formulationCommand).skip(1);
-                String[] parametrsArray = parametrsStream.toArray(String[]::new);
-                command.execute(parametrsArray, ctx);
+               command.execute(getCommandParams(), ctx);
                 logger.log(Level.INFO, "Current command is executed");
             } catch (Exception e){
                 e.printStackTrace();
