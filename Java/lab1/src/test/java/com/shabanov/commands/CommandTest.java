@@ -8,16 +8,35 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.*;
 
 public class CommandTest {
     private Context ctx;
     private CommandFactory commandFactory;
     @BeforeEach
-    void setUp(){
+    void setUp() throws IOException {
         ctx = new Context();
-        commandFactory = new CommandFactory();
+        String commands = "+=com.shabanov.commands.Add\n" +
+                            "-=com.shabanov.commands.Sub\n" +
+                            "*=com.shabanov.commands.Mul\n" +
+                            "/=com.shabanov.commands.Div\n" +
+                            "sqrt=com.shabanov.commands.Sqrt\n" +
+                            "push=com.shabanov.commands.Push\n" +
+                            "pop=com.shabanov.commands.Pop\n" +
+                            "print=com.shabanov.commands.Print\n" +
+                            "define=com.shabanov.commands.Define\n";
+        InputStream inputStream = new ByteArrayInputStream(commands.getBytes());
+        commandFactory = new CommandFactory(inputStream);
+    }
+
+    @Test
+    void CommandFactoryCorrect() {
+        Command command = commandFactory.createCommand("push");
+    }
+
+    @Test
+    void CommandFactoryError() {
+        Assertions.assertThrows(NullPointerException.class, () -> commandFactory.createCommand("fasfsa"));
     }
 
     @Test

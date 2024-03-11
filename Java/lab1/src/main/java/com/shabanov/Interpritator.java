@@ -5,6 +5,8 @@ import com.shabanov.commands.CommandFactory;
 import com.shabanov.commands.Context;
 
 import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +22,13 @@ public class Interpritator {
     public void start(){
         Context ctx = new Context();
         logger.log(Level.INFO, "Created context");
-        CommandFactory commandFactory = new CommandFactory();
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream("commands.properties");
+        CommandFactory commandFactory = null;
+        try{
+            commandFactory = new CommandFactory(inputStream);
+        }catch (IOException e){
+            e.printStackTrace();
+        }
         logger.log(Level.INFO, "Created command factory");
 
         String line;
