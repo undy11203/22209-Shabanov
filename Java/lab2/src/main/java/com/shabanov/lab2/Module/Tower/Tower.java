@@ -6,6 +6,8 @@ import com.shabanov.lab2.Module.Types.TowerType;
 import com.shabanov.lab2.Module.Utils.Vector2D;
 
 public abstract class Tower {
+    private int maxLife;
+    private int life;
     private int power;
     private Vector2D coords;
     private TowerType towerType;
@@ -16,7 +18,7 @@ public abstract class Tower {
 
     private EnemyType priority = null;
 
-    public Tower(int power, Vector2D coords, TowerType towerType, BulletType bulletType, double radius, double attackRate, double lastAttackTime) {
+    public Tower(int power, Vector2D coords, TowerType towerType, BulletType bulletType, double radius, double attackRate, double lastAttackTime, int maxLife) {
         this.power = power;
         this.coords = new Vector2D(coords);
         this.towerType = towerType;
@@ -24,6 +26,8 @@ public abstract class Tower {
         this.radius = radius;
         this.attackRate = attackRate;
         this.lastAttackTime = lastAttackTime;
+        this.maxLife = maxLife;
+        this.life = maxLife;
     }
 
     public Vector2D getCoord() {
@@ -71,6 +75,22 @@ public abstract class Tower {
 
     public void setPriority(EnemyType priority) {
         this.priority = priority;
+    }
+
+    public int getMaxLife() {
+        return maxLife;
+    }
+
+    public void setMaxLife(int maxLife) {
+        this.maxLife = maxLife;
+    }
+
+    public int getLife() {
+        return life;
+    }
+
+    public void setLife(int life) {
+        this.life = life;
     }
 
 }

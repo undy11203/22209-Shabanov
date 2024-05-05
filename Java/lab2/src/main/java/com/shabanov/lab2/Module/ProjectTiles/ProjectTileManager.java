@@ -19,12 +19,14 @@ public class ProjectTileManager {
         this.towerManager = towerManager;
     }
 
-    public void addProjectTile(Tower tower, Enemy enemy, BulletType type) {
+    public void addProjectTile(Tower tower, Enemy enemy, BulletType type, boolean isFromTowerToEnemy) {
         switch (type) {
-            case FIREBALL -> projectTiles.add(new Fireball(tower, enemy));
-            case BULLET -> projectTiles.add(new Bullet(tower, enemy));
+            case FIREBALL -> projectTiles.add(new Fireball(tower, enemy, isFromTowerToEnemy));
+            case BULLET -> projectTiles.add(new Bullet(tower, enemy, isFromTowerToEnemy));
+            case WIZARD_BULLET -> projectTiles.add(new WizardBullet(tower, enemy, isFromTowerToEnemy));
         }
     }
+
 
     public void moveProjectTile() {
         projectTiles.stream().forEach(ProjectTile -> {
@@ -48,14 +50,22 @@ public class ProjectTileManager {
     }
 
     public void destroyProjectTiles(){
-        projectTiles.removeIf(ProjectTile -> {
-            if(ProjectTile.getFinish() == null || ProjectTile.getEnemy() == null) return true;
-            if(ProjectTile.getCoord().distance(ProjectTile.getEnemy().getCoord()) < 0.1) {
-                enemyManager.takeDamage(ProjectTile.getEnemy(), ProjectTile.getTower().getPower());
-                return true;
+        ArrayList<ProjectTile> remainingProjectTiles = new ArrayList<>();
+
+        for (ProjectTile projectTile : projectTiles) {
+            if (projectTile.getFinish() != null && projectTile.getCoord().distance(projectTile.getFinish()) > 0.1) {
+                remainingProjectTiles.add(projectTile);
+            } else {
+                if(projectTile.isFromTowerToEnemy()){
+                    enemyManager.takeDamage(projectTile.getEnemy(), projectTile.getTower().getPower());
+                }else {
+                    towerManager.takeDamage(projectTile.getTower(), projectTile.getEnemy().getPower());
+                }
+                projectTiles = null;
             }
-            return false;
-        });
+        }
+
+        projectTiles = remainingProjectTiles;
     }
 
     public ArrayList<ProjectTile> getProjectTiles() {

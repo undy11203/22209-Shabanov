@@ -6,6 +6,6 @@ import com.shabanov.lab2.Module.Utils.Vector2D;
 
 public class Piromant extends Tower{
     public Piromant(Vector2D coords) {
-        super(50, coords, TowerType.PIROMANT, BulletType.FIREBALL, 3.0, 500.0, 0.0);
+        super(50, coords, TowerType.PIROMANT, BulletType.FIREBALL, 3.0, 500.0, 0.0, 150);
     }
 }

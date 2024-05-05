@@ -5,8 +5,7 @@ import com.shabanov.lab2.Module.Tower.Tower;
 import com.shabanov.lab2.Module.Types.BulletType;
 
 public class Fireball extends ProjectTile{
-    public Fireball(Tower tower, Enemy enemy) {
-        super(tower, enemy, BulletType.FIREBALL, 0.08);
-
+    public Fireball(Tower tower, Enemy enemy, boolean isFromTowerToEnemy) {
+        super(tower, enemy, BulletType.FIREBALL, 0.08, isFromTowerToEnemy);
     }
 }

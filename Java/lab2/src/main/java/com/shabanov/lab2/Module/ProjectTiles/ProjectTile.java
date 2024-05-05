@@ -12,12 +12,19 @@ public abstract class ProjectTile {
     private Double speed;
     private Vector2D coord;
 
-    public ProjectTile(Tower tower, Enemy enemy, BulletType type, Double speed) {
+    private boolean isFromTowerToEnemy;
+
+    public ProjectTile(Tower tower, Enemy enemy, BulletType type, Double speed, boolean isFromTowerToEnemy) {
         this.tower = tower;
         this.enemy = enemy;
         this.type = type;
         this.speed = speed;
-        this.coord = new Vector2D(tower.getCoord());
+        this.isFromTowerToEnemy = isFromTowerToEnemy;
+        if(isFromTowerToEnemy){
+            this.coord = new Vector2D(tower.getCoord());
+        }else {
+            this.coord = new Vector2D(enemy.getCoord());
+        }
     }
 
     public BulletType getType() {
@@ -25,10 +32,17 @@ public abstract class ProjectTile {
     }
 
     public Vector2D getFinish() {
-        if(enemy == null){
-            return null;
+        if(isFromTowerToEnemy){
+            if(enemy == null){
+                return null;
+            }
+            return enemy.getCoord();
+        }else{
+            if(tower == null){
+                return null;
+            }
+            return tower.getCoord();
         }
-        return enemy.getCoord();
     }
 
     public void setType(BulletType type) {
@@ -58,5 +72,10 @@ public abstract class ProjectTile {
 
     public Enemy getEnemy(){
         return enemy;
+    }
+
+
+    public boolean isFromTowerToEnemy() {
+        return isFromTowerToEnemy;
     }
 }

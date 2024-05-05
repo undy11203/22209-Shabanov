@@ -168,23 +168,28 @@ public class GameView implements Initializable {
                 priorityText.setFont(font);
                 priorityText.setFill(Color.WHITE);
                 priorityText.setLayoutX(currentTowerMenu.getWidth() - 250);
-                priorityText.setLayoutY(20);
+                priorityText.setLayoutY(15);
                 currentTowerMenu.getChildren().add(priorityText);
 
                 Button priorityButton1 = new Button("Orc");
                 priorityButton1.setLayoutX(currentTowerMenu.getWidth() - 250);
-                priorityButton1.setLayoutY(25);
+                priorityButton1.setLayoutY(23);
                 priorityEnemy.add(priorityButton1);
 
                 Button priorityButton2 = new Button("Goblin");
                 priorityButton2.setLayoutX(currentTowerMenu.getWidth() - 250);
-                priorityButton2.setLayoutY(48);
+                priorityButton2.setLayoutY(38);
                 priorityEnemy.add(priorityButton2);
 
-                Button priorityButton3 = new Button("none");
+                Button priorityButton3 = new Button("Goblin");
                 priorityButton3.setLayoutX(currentTowerMenu.getWidth() - 250);
-                priorityButton3.setLayoutY(70);
+                priorityButton3.setLayoutY(52);
                 priorityEnemy.add(priorityButton3);
+
+                Button priorityButton4 = new Button("none");
+                priorityButton4.setLayoutX(currentTowerMenu.getWidth() - 250);
+                priorityButton4.setLayoutY(70);
+                priorityEnemy.add(priorityButton4);
                 currentTowerMenu.getChildren().addAll(priorityEnemy);
 
                 upgrade = new Button("Upgrade");
@@ -277,6 +282,7 @@ public class GameView implements Initializable {
                 switch (ProjectTile.getType()){
                     case BULLET -> imgPath += "Bullet.png";
                     case FIREBALL -> imgPath += "Fireball.png";
+                    case WIZARD_BULLET -> imgPath += "wizerdBullet.png";
                 }
 
                 Image projectTileImage = new Image(getClass().getResource(imgPath).toString());
@@ -301,6 +307,10 @@ public class GameView implements Initializable {
 
         if(towers.size() > 0){
             towers.stream().forEach(Tower -> {
+                double life = Tower.getLife();
+                double maxLife = Tower.getMaxLife();
+                double currentCent = life/maxLife;
+
                 Vector2D coords = Tower.getCoord();
 
                 String imgPath = "/assets/";
@@ -315,6 +325,10 @@ public class GameView implements Initializable {
                     double imgX = coords.x * tileSize.x;
                     double imgY = coords.y * tileSize.y;
                     context2D.drawImage(towerImage, imgX, imgY, tileSize.x, tileSize.y);
+                    context2D.setStroke(Color.BLUE);
+                    context2D.strokeRect(imgX+10, imgY + tileSize.y - tileSize.y/10, tileSize.x-20, 10);
+                    context2D.setFill(Color.WHITE);
+                    context2D.fillRect(imgX+10, imgY + tileSize.y - tileSize.y/10+2, (tileSize.x-20)*currentCent, 8);
                 }
             });
         }
@@ -332,14 +346,15 @@ public class GameView implements Initializable {
         if(enemies.size() > 0){
             enemies.stream().forEach(Enemy -> {
                 Vector2D coords = Enemy.getCoord();
-                double life = Enemy.getHealth();
-                double maxLife = Enemy.getMaxHealth();
+                double life = Enemy.getLife();
+                double maxLife = Enemy.getMaxLife();
                 double currentCent = life/maxLife;
 
                 String imgPath = "/assets/";
                 switch (Enemy.getType()){
                     case GOBLIN -> imgPath += "goblin.png";
                     case ORC -> imgPath += "orc.png";
+                    case WIZARD -> imgPath += "wizard.png";
                 }
 
                 Image enemyImage = new Image(getClass().getResource(imgPath).toString());

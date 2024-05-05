@@ -32,6 +32,7 @@ public class GameController {
         projectTileManager.moveProjectTile();
         projectTileManager.destroyProjectTiles();
 
+        enemyManager.attack(delta);
         enemyManager.moveEnemies();
         enemyManager.createWave(delta);
         enemyManager.destroyEnemyes();
@@ -40,6 +41,7 @@ public class GameController {
             towerManager.calcDamage(damageToBase);
         }
         towerManager.updateState(delta);
+        towerManager.destroyTower();
 
         goldManager.updateGold(delta);
 
@@ -54,6 +56,8 @@ public class GameController {
         projectTileManager = new ProjectTileManager(enemyManager, towerManager);
         towerManager.setEnemyManager(enemyManager);
         towerManager.setProjectTileManager(projectTileManager);
+        enemyManager.setTowerManager(towerManager);
+        enemyManager.setProjectTileManager(projectTileManager);
     }
 
     public ArrayList<ArrayList<BlockType>> getStaticMap() {
@@ -140,6 +144,7 @@ public class GameController {
         switch (enemyName) {
             case "Goblin" -> towerManager.ChangePriority(vector2D, EnemyType.GOBLIN);
             case "Orc" -> towerManager.ChangePriority(vector2D, EnemyType.ORC);
+            case "Wizard" -> towerManager.ChangePriority(vector2D, EnemyType.WIZARD);
             case "none" -> towerManager.ChangePriority(vector2D, null);
         }
     }

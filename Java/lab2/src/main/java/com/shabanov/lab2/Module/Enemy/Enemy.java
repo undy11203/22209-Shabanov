@@ -14,8 +14,17 @@ public abstract class Enemy {
     private Vector2D offsetCoord;
     private EnemyType type;
     private ArrayList<Vector2D> way;
+    private boolean isTowerAttackingEnemy;
 
-    public Enemy(int life, int maxLife, int power, double speed, Vector2D coords, EnemyType type, ArrayList<Vector2D> way) {
+    private int attackRate;
+
+    private double radius;
+
+    private  boolean isStop = false;
+
+    private double lastTimeToAttack = 0;
+
+    public Enemy(int life, int maxLife, int power, double speed, Vector2D coords, EnemyType type, ArrayList<Vector2D> way, boolean isTowerAttackingEnemy, double radius, int attackRate) {
         this.life = life;
         this.maxLife = maxLife;
         this.power = power;
@@ -26,19 +35,24 @@ public abstract class Enemy {
         this.offsetCoord = new Vector2D();
         this.offsetCoord.x = this.coords.x - (int)this.coords.x;
         this.offsetCoord.y = this.coords.y - (int)this.coords.y;
+        this.isTowerAttackingEnemy = isTowerAttackingEnemy;
+        if(isTowerAttackingEnemy){
+            this.radius = radius;
+            this.attackRate = attackRate;
+        }
     }
 
     public void setCoords(Vector2D coords){
         this.coords = coords;
     }
 
-    public int getHealth() {
+    public int getLife() {
         return life;
     }
 
-    public void setHealth(int life) { this.life = life; }
+    public void setLife(int life) { this.life = life; }
 
-    public int getMaxHealth() {
+    public int getMaxLife() {
         return maxLife;
     }
 
@@ -72,5 +86,38 @@ public abstract class Enemy {
 
     public double getOffsetY(){
         return offsetCoord.y;
+    }
+
+    public boolean isTowerAttackingEnemy() {
+        return isTowerAttackingEnemy;
+    }
+
+    public void setTowerAttackingEnemy(boolean towerAttackingEnemy) {
+        isTowerAttackingEnemy = towerAttackingEnemy;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+
+    public int getAttackRate() {
+        return attackRate;
+    }
+
+    public boolean isStop() {
+        return isStop;
+    }
+
+    public void setStop(boolean stop) {
+        isStop = stop;
+    }
+
+    public double getLastTimeToAttack() {
+        return lastTimeToAttack;
+    }
+
+    public void setLastTimeToAttack(double lastTimeToAttack) {
+        this.lastTimeToAttack = lastTimeToAttack;
     }
 }

@@ -5,8 +5,7 @@ import com.shabanov.lab2.Module.Tower.Tower;
 import com.shabanov.lab2.Module.Types.BulletType;
 
 public class Bullet extends ProjectTile {
-    public Bullet(Tower tower, Enemy enemy) {
-        super(tower, enemy, BulletType.BULLET, 0.15);
-
+    public Bullet(Tower tower, Enemy enemy, boolean isFromTowerToEnemy) {
+        super(tower, enemy, BulletType.BULLET, 0.15, isFromTowerToEnemy);
     }
 }

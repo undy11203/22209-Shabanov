@@ -60,7 +60,7 @@ public class TowerManager {
             }
 
             if(target != null){
-                projectTileManager.addProjectTile(tower, target, tower.getBulletType());
+                projectTileManager.addProjectTile(tower, target, tower.getBulletType(), true);
             }
         }
     }
@@ -152,5 +152,24 @@ public class TowerManager {
             Vector2D coord = tower.getCoord();
             if (coord.equals(vector2D)) tower.setPriority(type);
         }
+    }
+
+    public void destroyTower() {
+        ArrayList<Tower> remainingTowers = new ArrayList<>();
+
+        for (Tower tower : towers) {
+            if (tower.getLife() > 0) {
+                remainingTowers.add(tower);
+            } else {
+                tower = null;
+            }
+        }
+
+        towers = remainingTowers;
+    }
+
+
+    public void takeDamage(Tower tower, int damage) {
+        tower.setLife(tower.getLife() - damage);
     }
 }

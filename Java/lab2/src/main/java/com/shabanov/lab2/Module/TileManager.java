@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class TileManager {
-    private Image atlas = new Image(getClass().getResourceAsStream("/assets/tower1.png"));
     private ArrayList<Image> tiles = new ArrayList<>();
     private LevelsFileManager fileManager = new LevelsFileManager();
     private ArrayList<ArrayList<BlockType>> map;
@@ -24,12 +23,10 @@ public class TileManager {
     }
 
     private void CreateMap() {
-        //Создаём карту из каждый элемент это тип
         map = fileManager.getMap();
     }
 
     private void CreateTiles() {
-        //Создадим массив из тайлов разных видов и будем выдовать по их типам(id) в View
         Image atlasRoad = new Image(getClass().getResourceAsStream("/assets/road.jfif"));
 
         Image grow = new WritableImage(atlasRoad.getPixelReader(), 0, 0, (int)atlasRoad.getWidth()/6, (int)atlasRoad.getHeight()/3);
