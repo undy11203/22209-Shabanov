@@ -205,8 +205,8 @@ public class GameView implements Initializable {
                 if(type != null){
                     String name = "";
                     switch (type) {
-                        case PIROMANT -> name = "piromant";
-                        case MUSKETEER -> name = "musketeer";
+                        case PIROMANT -> name = "Piromant";
+                        case MUSKETEER -> name = "Musketeer";
                     }
                     Image image = new Image(getClass().getResource("/assets/" + name + ".png").toString());
                     ImageView imageView = new ImageView(image);
