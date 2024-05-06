@@ -69,7 +69,7 @@ public class GameView implements Initializable {
         }
 
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(40),
+                Duration.millis(60),
                 this::onTimerTick
         ));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -181,7 +181,7 @@ public class GameView implements Initializable {
                 priorityButton2.setLayoutY(38);
                 priorityEnemy.add(priorityButton2);
 
-                Button priorityButton3 = new Button("Goblin");
+                Button priorityButton3 = new Button("Wizard");
                 priorityButton3.setLayoutX(currentTowerMenu.getWidth() - 250);
                 priorityButton3.setLayoutY(52);
                 priorityEnemy.add(priorityButton3);
@@ -352,9 +352,9 @@ public class GameView implements Initializable {
 
                 String imgPath = "/assets/";
                 switch (Enemy.getType()){
-                    case GOBLIN -> imgPath += "goblin.png";
-                    case ORC -> imgPath += "orc.png";
-                    case WIZARD -> imgPath += "wizard.png";
+                    case GOBLIN -> imgPath += "Goblin.png";
+                    case ORC -> imgPath += "Orc.png";
+                    case WIZARD -> imgPath += "Wizard.png";
                 }
 
                 Image enemyImage = new Image(getClass().getResource(imgPath).toString());
