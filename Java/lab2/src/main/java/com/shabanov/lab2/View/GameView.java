@@ -315,8 +315,8 @@ public class GameView implements Initializable {
 
                 String imgPath = "/assets/";
                 switch (Tower.getTowerType()){
-                    case MUSKETEER -> imgPath += "musketeer.png";
-                    case PIROMANT -> imgPath += "piromant.png";
+                    case MUSKETEER -> imgPath += "Musketeer.png";
+                    case PIROMANT -> imgPath += "Piromant.png";
                 }
 
                 Image towerImage = new Image(getClass().getResource(imgPath).toString());
