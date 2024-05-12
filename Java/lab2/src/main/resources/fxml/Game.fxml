@@ -9,6 +9,7 @@
       <Canvas fx:id="mainCanvas" height="600.0" width="700.0" />
       <Text fx:id="gold" layoutX="470.0" layoutY="40.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Gold: " wrappingWidth="115.47003555297852" />
       <Text fx:id="live" layoutX="470.0" layoutY="70.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Live: " />
+      <Text fx:id="time" layoutX="470.0" layoutY="98.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Time:" wrappingWidth="194.40634155273438" />
       <Pane fx:id="Menu" layoutY="602.0" prefHeight="100.0" prefWidth="700.0" />
    </children>
 </Pane>

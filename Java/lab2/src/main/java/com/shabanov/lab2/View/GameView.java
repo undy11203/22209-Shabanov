@@ -36,6 +36,7 @@ public class GameView implements Initializable {
     @FXML Pane Menu;
     @FXML Text gold;
     @FXML Text live;
+    @FXML Text time;
     @FXML Pane currentTowerMenu;
     @FXML Button upgrade;
     @FXML Button remove;
@@ -289,7 +290,9 @@ public class GameView implements Initializable {
         live.setFont(font);
         live.setText("Live: " + liveCount);
 
-
+        time.setFill(Color.rgb(0, 0, 0));
+        time.setFont(font);
+        time.setText("Time: " + (int)timerGame/1000 + "/" + gameController.getTimeToWin() + " sec");
     }
 
     private void RenderProjectile() {

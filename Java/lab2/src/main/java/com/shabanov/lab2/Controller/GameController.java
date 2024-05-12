@@ -169,4 +169,8 @@ public class GameController {
         if (timerGame > timeToWin) return true;
         return false;
     }
+
+    public int getTimeToWin(){
+        return (int) timeToWin/1000;
+    }
 }
