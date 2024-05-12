@@ -50,9 +50,9 @@ public class GameView implements Initializable {
     GameController gameController = new GameController();
     MenuController menuController = new MenuController();
 
-    private double timerGameOver = 0;
-    private double timeGameOver = 2000;
-
+    private double timerEndGame = 0;
+    private double timeEndGame = 2000;
+    private double timerGame = 0;
     private Instant lastUpdateInstant = Instant.now();
 
     private String towerButtonText = null;
@@ -69,7 +69,7 @@ public class GameView implements Initializable {
         }
 
         Timeline timeline = new Timeline(new KeyFrame(
-                Duration.millis(60),
+                Duration.millis(40),
                 this::onTimerTick
         ));
         timeline.setCycleCount(Timeline.INDEFINITE);
@@ -109,10 +109,21 @@ public class GameView implements Initializable {
     private void onTimerTick(ActionEvent actionEvent) {
         Instant now = Instant.now();
         double delta = (double) java.time.Duration.between(lastUpdateInstant, now).toMillis();
+        timerGame += delta;
 
-        if(gameController.isGameOver()){
-            timerGameOver += delta;
-            if(timerGameOver >= timeGameOver){
+        if(gameController.isGameWin(timerGame)){
+            timerEndGame += delta;
+            if(timerEndGame >= timeEndGame){
+                try{
+                    menuController.viewSwitch(Game, "/fxml/Menu.fxml");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            RenderGameWin();
+        } else if(gameController.isGameOver()){
+            timerEndGame += delta;
+            if(timerEndGame >= timeEndGame){
                 try{
                     menuController.viewSwitch(Game, "/fxml/Menu.fxml");
                 } catch (IOException e) {
@@ -131,6 +142,21 @@ public class GameView implements Initializable {
         }
 
         lastUpdateInstant = now;
+    }
+
+    private void RenderGameWin() {
+        Game.getChildren().clear();
+        Game.setStyle("-fx-background-color: black;");
+
+        Font font = Font.loadFont(String.valueOf(getClass().getResource("/assets/Silkscreen.ttf")), 20);
+
+        Text gameOverText = new Text("Game win!!!");
+        gameOverText.setFont(font);
+        gameOverText.setFill(Color.GREEN);
+        gameOverText.setLayoutX((Game.getWidth() - gameOverText.getBoundsInLocal().getWidth()) / 2);
+        gameOverText.setLayoutY(Game.getHeight() / 2);
+
+        Game.getChildren().add(gameOverText);
     }
 
     private void RenderGameOver() {
@@ -275,11 +301,11 @@ public class GameView implements Initializable {
         tileSize.y = mainCanvas.getHeight() / blocks.size();
 
         if(projectTiles.size() > 0){
-            projectTiles.stream().forEach(ProjectTile -> {
-                Vector2D coords = ProjectTile.getCoord();
+            for (ProjectTile projectTile: projectTiles){
+                Vector2D coords = projectTile.getCoord();
 
                 String imgPath = "/assets/";
-                switch (ProjectTile.getType()){
+                switch (projectTile.getType()){
                     case BULLET -> imgPath += "Bullet.png";
                     case FIREBALL -> imgPath += "Fireball.png";
                     case WIZARD_BULLET -> imgPath += "wizerdBullet.png";
@@ -292,7 +318,7 @@ public class GameView implements Initializable {
                     double imgY = coords.y * tileSize.y;
                     context2D.drawImage(projectTileImage, imgX, imgY, 10, 10);
                 }
-            });
+            }
         }
     }
 
@@ -306,15 +332,15 @@ public class GameView implements Initializable {
         ArrayList<Tower> towers = gameController.getTowers();
 
         if(towers.size() > 0){
-            towers.stream().forEach(Tower -> {
-                double life = Tower.getLife();
-                double maxLife = Tower.getMaxLife();
+            for (Tower tower: towers){
+                double life = tower.getLife();
+                double maxLife = tower.getMaxLife();
                 double currentCent = life/maxLife;
 
-                Vector2D coords = Tower.getCoord();
+                Vector2D coords = tower.getCoord();
 
                 String imgPath = "/assets/";
-                switch (Tower.getTowerType()){
+                switch (tower.getTowerType()){
                     case MUSKETEER -> imgPath += "Musketeer.png";
                     case PIROMANT -> imgPath += "Piromant.png";
                 }
@@ -330,7 +356,7 @@ public class GameView implements Initializable {
                     context2D.setFill(Color.WHITE);
                     context2D.fillRect(imgX+10, imgY + tileSize.y - tileSize.y/10+2, (tileSize.x-20)*currentCent, 8);
                 }
-            });
+            }
         }
     }
 
@@ -344,14 +370,14 @@ public class GameView implements Initializable {
         tileSize.y = mainCanvas.getHeight() / blocks.size();
 
         if(enemies.size() > 0){
-            enemies.stream().forEach(Enemy -> {
-                Vector2D coords = Enemy.getCoord();
-                double life = Enemy.getLife();
-                double maxLife = Enemy.getMaxLife();
+            for (Enemy enemy: enemies){
+                Vector2D coords = enemy.getCoord();
+                double life = enemy.getLife();
+                double maxLife = enemy.getMaxLife();
                 double currentCent = life/maxLife;
 
                 String imgPath = "/assets/";
-                switch (Enemy.getType()){
+                switch (enemy.getType()){
                     case GOBLIN -> imgPath += "Goblin.png";
                     case ORC -> imgPath += "Orc.png";
                     case WIZARD -> imgPath += "Wizard.png";
@@ -371,7 +397,7 @@ public class GameView implements Initializable {
 
                 }
 
-            });
+            }
         }
 
     }

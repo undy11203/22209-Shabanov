@@ -37,14 +37,10 @@ public class ProjectTileManager {
                 double dy = finishCoord.y - now.y;
                 double dx = finishCoord.x - now.x;
 
-                now.y += (dy > 0? 1: -1)*speed;
-                now.x += (dx > 0? 1: -1)*speed;
+                double distance = Math.sqrt(dy * dy + dx * dx);
 
-                dy = finishCoord.y - now.y;
-                dx = finishCoord.x - now.x;
-
-                now.y += (dy > 0? 1: -1)*speed;
-                now.x += (dx > 0? 1: -1)*speed;
+                now.y += dy*speed/distance;
+                now.x += dx*speed/distance;
             }
         });
     }
@@ -53,7 +49,7 @@ public class ProjectTileManager {
         ArrayList<ProjectTile> remainingProjectTiles = new ArrayList<>();
 
         for (ProjectTile projectTile : projectTiles) {
-            if (projectTile.getFinish() != null && projectTile.getCoord().distance(projectTile.getFinish()) > 0.1) {
+            if (projectTile.getFinish() != null && projectTile.getCoord().distance(projectTile.getFinish()) > projectTile.getSpeed()) {
                 remainingProjectTiles.add(projectTile);
             } else {
                 if(projectTile.isFromTowerToEnemy()){

@@ -7,6 +7,6 @@ import java.util.ArrayList;
 
 public class Wizard extends Enemy{
     public Wizard(Vector2D coords, ArrayList<Vector2D> way) {
-        super(100, 100, 10, 0.05, coords, EnemyType.WIZARD, way, true, 2, 500);
+        super(100, 100, 10, 0.1, coords, EnemyType.WIZARD, way, true, 2, 500);
     }
 }

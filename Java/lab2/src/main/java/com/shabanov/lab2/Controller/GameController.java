@@ -13,6 +13,7 @@ import com.shabanov.lab2.Module.Types.BlockType;
 import com.shabanov.lab2.Module.Types.BulletType;
 import com.shabanov.lab2.Module.Types.EnemyType;
 import com.shabanov.lab2.Module.Types.TowerType;
+import com.shabanov.lab2.Module.Utils.LevelsFileManager;
 import com.shabanov.lab2.Module.Utils.Vector2D;
 import javafx.scene.image.Image;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Properties;
 
 public class GameController {
     private TileManager map;
@@ -27,15 +29,13 @@ public class GameController {
     private GoldManager goldManager;
     private TowerManager towerManager;
     private ProjectTileManager projectTileManager;
+    private double timeToWin;
 
     public void UpdateState(double delta) {
         projectTileManager.moveProjectTile();
         projectTileManager.destroyProjectTiles();
 
-        enemyManager.attack(delta);
-        enemyManager.moveEnemies();
-        enemyManager.createWave(delta);
-        enemyManager.destroyEnemyes();
+        enemyManager.UpdateState(delta);
         int damageToBase = enemyManager.destroyInBase();
         if(damageToBase > 0){
             towerManager.calcDamage(damageToBase);
@@ -58,6 +58,14 @@ public class GameController {
         towerManager.setProjectTileManager(projectTileManager);
         enemyManager.setTowerManager(towerManager);
         enemyManager.setProjectTileManager(projectTileManager);
+
+        Properties info = new Properties();
+        try {
+            info.load(getClass().getClassLoader().getResourceAsStream("app.properties"));
+            timeToWin = Integer.parseInt(info.getProperty("timeToWin"))*1000;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public ArrayList<ArrayList<BlockType>> getStaticMap() {
@@ -118,8 +126,16 @@ public class GameController {
         if(type != null){
             towerManager.upgradeTower(vector2D);
             switch (type){
-                case MUSKETEER -> goldManager.changeGold(-5);
-                case PIROMANT -> goldManager.changeGold(-10);
+                case MUSKETEER -> {
+                    if(goldManager.getGold() >= 5){
+                        goldManager.changeGold(-5);
+                    }
+                }
+                case PIROMANT -> {
+                    if(goldManager.getGold() >= 10){
+                        goldManager.changeGold(-10);
+                    }
+                }
             }
         }
     }
@@ -147,5 +163,10 @@ public class GameController {
             case "Wizard" -> towerManager.ChangePriority(vector2D, EnemyType.WIZARD);
             case "none" -> towerManager.ChangePriority(vector2D, null);
         }
+    }
+
+    public boolean isGameWin(double timerGame) {
+        if (timerGame > timeToWin) return true;
+        return false;
     }
 }
