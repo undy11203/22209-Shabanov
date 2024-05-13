@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane fx:id="Menu" prefHeight="400.0" prefWidth="200.0"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.shabanov.lab2.View.MenuView">
+   <children>
+      <Label layoutX="68.0" layoutY="41.0" prefHeight="20.0" prefWidth="64.0" text="Select level" />
+<!--      <Button fx:id="level1" layoutX="74.0" layoutY="92.0" mnemonicParsing="false" text="level 1" />-->
+<!--      <Button fx:id="level2" layoutX="75.0" layoutY="135.0" mnemonicParsing="false" text="level 2" />-->
+<!--      <Button fx:id="level3" layoutX="75.0" layoutY="175.0" mnemonicParsing="false" text="level 3" />-->
+   </children>
+</Pane>
